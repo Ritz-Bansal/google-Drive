@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String @id @default(uuid())
+  email  String @unique
+  username  String
+  gender    Gender
+  password  String
+  // profilePicture  String
+  folder    Folder[]
+  file      File[]
+}
+
+// this is a one to many self relationship kykui ek folder ke andar multiple folder ho sakte hai and ek folder
+// ka prent ek hi ho sakta hai i.e, a parent can have multiple childrens and children can have a single parent only
+
+// we are not storing childrenFOlder in the DB, it is dervied from the parentId, we store onlty -> id, title, userId, parentId
+model Folder {
+  id        String @id  @default(uuid())
+  title     String
+  userId    String 
+  user      User  @relation(fields: [userId], references: [id])
+  parentId  String? // as the root folder will have no parentFolderId, has ek folder ka ek hi parent hoga and us parent ka parent ho sakta hai
+  parent    Folder?  @relation(name: "self_relationship", fields: [parentId], references: [id])
+  childrenFolders   Folder[] @relation("self_relationship") // Give me all folders whose parentId equals parentId.
+  file    File[]
+}
+
+model File {
+  id    String @id @default(uuid())
+  title   String
+  type    FileType
+  url     String
+  parent  Folder? @relation(fields: [parentId], references: [id])
+  parentId String?        // root will have the folderId to be null
+  user    User  @relation(fields: [userId], references: [id])
+  userId  String
+}
+
+enum FileType {
+  video
+  pdf
+  image
+}
+
+enum Gender {
+  male
+  female 
+  other
+}

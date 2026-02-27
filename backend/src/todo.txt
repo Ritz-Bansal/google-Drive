@@ -1,0 +1,14 @@
+1. interceptors exist right, so what if I change the req body that the client is sending to something else, i.e, 
+
+client ---> attacker ---> server
+
+2. I want to change the image of the client to some malicious content and that will be uploaded in the S3 file, also then toh 
+i can see the responses the server is returning to the client, I can even see the client's password on signup therefore fuck their
+bank accounts
+
+3. HTTPS prevent this attack as S means secure, it ecnrypts the clients data and then sends it
+4. HTTP does not prevent as it does not encrypts the data of the client, therefore I can implement this on HTTP servers
+
+
+5. Implement this on this app.
+
