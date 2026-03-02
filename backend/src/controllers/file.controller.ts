@@ -21,7 +21,6 @@ const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!;
 const R2_ACCESS_SECRET = process.env.R2_ACCESS_SECRET!;
 const PUB_URL = process.env.PUB_URL!;
 
-
 const S3 = new S3Client({
   region: "auto", // Required by SDK but not used by R2
   endpoint: R2_URL,
@@ -40,6 +39,7 @@ export async function getPresignedUrlController(req: Request, res: Response) {
   // we do not get the file here, only the type of the file, and the size of it --> Presigned URLs exists so that files are not uploaded to backend
   // to save server cost
   try {
+    console.log("Inside the presigned url");
     const { type } = req.body;
     const { success } = presignedurlSchema.safeParse({ type: type });
 
@@ -60,8 +60,8 @@ export async function getPresignedUrlController(req: Request, res: Response) {
         Key: pathName,
         ContentType: contentType,
         // ContentLength: bytes -- optional hai bhai
-        IfNoneMatch: "*"
-   // always needed, kyuki if the different files are uploaded in the same location then the latest file will be used -- dikkat
+        IfNoneMatch: "*",
+        // always needed, kyuki if the different files are uploaded in the same location then the latest file will be used -- dikkat
         // this ensures ki file ek baar hi jaaye iss presigned url pe as it checks does the object in this bucket at this key exists or not, if not karle upload
         // if yes, return error status code  -- 412 Precondition Failed
       }),
@@ -70,6 +70,7 @@ export async function getPresignedUrlController(req: Request, res: Response) {
 
     // I will return the presigned Url and the location where the asset will be finally stored, so that in the create route,
     //  i can get it and than put this in the DB URL
+    console.log("Reponding from the presigned url")
     return res.status(200).json({
       presignedUrl: putUrl,
       finalUrl: `${PUB_URL}/` + pathName,
@@ -128,14 +129,20 @@ export async function createParentFileController(
 
 export async function createRootFileController(req: Request, res: Response) {
   try {
+    console.log("Inside the upload file");
+    let { parentId } = req.body;
     const { title, fileUrl, type } = req.body;
- 
-    const { success } = uploadRootFileSchema.safeParse({
+    if(parentId == undefined){
+      parentId = null;
+    }
+    const { success, error } = uploadRootFileSchema.safeParse({
       title: title,
       fileUrl: fileUrl,
       type: type,
     });
 
+    console.log(error);
+    console.log(success);
     if (!success) {
       return res.status(400).json({
         message: "Incorrect Inputs",
@@ -147,17 +154,19 @@ export async function createRootFileController(req: Request, res: Response) {
       data: {
         title: title,
         url: fileUrl,
-        parentId: null,
+        parentId: parentId,
         type: type,
         userId: userId,
       },
     });
 
+    console.log("Responding from the upload file");
     return res.status(201).json({
-      fileId: uploadedFile.id,
-      fileUrl: uploadedFile.url,
+      id: uploadedFile.id,
+      // fileUrl: uploadedFile.url,
       title: uploadedFile.title,
-      parentId: uploadedFile.parentId,
+      // parentId: uploadedFile.parentId,
+      type: uploadedFile.type
     });
   } catch (error) {
     res.status(500).json({
@@ -167,28 +176,29 @@ export async function createRootFileController(req: Request, res: Response) {
 }
 
 // sending the Public URL's initially but I think presigned URLs shoud be sent
-export async function fetchFileController(req: Request, res: Response){
-  try{
+export async function fetchFileController(req: Request, res: Response) {
+  try {
     const fileId = req.params.fileId;
-    const {success} = fetchFileSchema.safeParse({fileId: fileId});
+    const { success } = fetchFileSchema.safeParse({ fileId: fileId });
 
-    if(!success){
+    if (!success) {
       return res.status(400).json({
-        message: "File id should be string"
+        message: "File id should be string",
       });
     }
 
     const userId = req.userId;
-    const file = await prisma.file.findFirst({ // id is PK therefore only one file exits with this id, therefore findFirst always better
+    const file = await prisma.file.findFirst({
+      // id is PK therefore only one file exits with this id, therefore findFirst always better
       where: {
         id: fileId as string, //as if not string error thrown,
-        userId: userId! // aise toh no need for it as fileId is enough as PK hai, but no harm, sounds more right
-      }
-    })
+        userId: userId!, // aise toh no need for it as fileId is enough as PK hai, but no harm, sounds more right
+      },
+    });
 
-    if(!file){
+    if (!file) {
       return res.status(404).json({
-        message: "No such file found"
+        message: "No such file found",
       });
     }
 
@@ -196,20 +206,15 @@ export async function fetchFileController(req: Request, res: Response){
       message: {
         // fileId: file.id,
         fileUrl: file.url,
-        // fileTitle: file.title  
-      }
-    })
-
-  }catch{
+        // fileTitle: file.title
+      },
+    });
+  } catch {
     return res.status(500).json({
-      message: "Internal server error"
-    })
+      message: "Internal server error",
+    });
   }
 }
-
-
-
-
 
 // move this code to desirable place
 
@@ -219,6 +224,7 @@ const xyz = z.object({
 
 interface IQuery {
   parentId: string | undefined | null;
+  title: string;
 }
 
 // no need
@@ -245,10 +251,12 @@ export async function getFolderAndFilesController(
   req: Request<{}, {}, {}, IQuery>,
   res: Response,
 ) {
+  console.log("Inside the fetch froute");
   try {
     let parentId = req.query.parentId;
 
     const { success } = xyz.safeParse({ parentId: parentId });
+    // console.log("SUccess ", success);
     if (!success) {
       return res.status(400).json({
         message: "Incorrect inputs",
@@ -261,7 +269,7 @@ export async function getFolderAndFilesController(
       const isExisting = await prisma.folder.findFirst({
         where: {
           parentId: parentId,
-          userId: userId
+          userId: userId,
         },
       });
 
@@ -270,60 +278,71 @@ export async function getFolderAndFilesController(
           message: "The given folder does not exist",
         });
       }
-    }else{
+    } else {
       parentId = null;
     }
 
     // let data = [];
     // if (typeof parentId == "string") {
-      const folderData = await prisma.folder.findMany({
-        where: {
-          parentId: parentId,
-          userId: userId // needs userId varna if parentId null then dikkat
-        },
-      });
+    const folderData = await prisma.folder.findMany({
+      where: {
+        parentId: parentId,
+        userId: userId, // needs userId varna if parentId null then dikkat
+      },
+    });
 
-      const fileData = await prisma.file.findMany({
-        where: {
-          parentId: parentId,
-          userId: userId, // needs userId varna if parentId null then dikkat
-        },
-      });
+    const fileData = await prisma.file.findMany({
+      where: {
+        parentId: parentId,
+        userId: userId, // needs userId varna if parentId null then dikkat
+      },
+    });
 
-      // console.log(JSON.stringify(folderData));
-      // console.log(JSON.stringify(fileData));
+    // console.log(JSON.stringify(folderData));
+    // console.log(JSON.stringify(fileData));
 
-      // let folderId = [];
-      // let folderTitle = [];
-      // let fileTitle = [];
-      // let fileType = [];
-      // let fileUrl = [];
-      // let fileId = []; // just for testing
+    // let folderId = [];
+    // let folderTitle = [];
+    // let fileTitle = [];
+    // let fileType = [];
+    // let fileUrl = [];
+    // let fileId = []; // just for testing
 
-      // for(let i=0; i<data.length; i++){
-      //   folderId.push(data[i]?.id);
-      //   folderTitle.push(data[i]?.title);
-      //   fileTitle.push(data[i]?.file.map(data => data.title));
-      //   fileType.push(data[i]?.file.map(data => data.type));
-      //   fileUrl.push(data[i]?.file.map(data => data.url));
-      //   fileId.push(data[i]?.file.map(data => data.id));
+    // for(let i=0; i<data.length; i++){
+    //   folderId.push(data[i]?.id);
+    //   folderTitle.push(data[i]?.title);
+    //   fileTitle.push(data[i]?.file.map(data => data.title));
+    //   fileType.push(data[i]?.file.map(data => data.type));
+    //   fileUrl.push(data[i]?.file.map(data => data.url));
+    //   fileId.push(data[i]?.file.map(data => data.id));
 
-      // }
+    // }
 
-      return res.status(200).json({
-        data: {
-          folder: {
-            id: folderData.map(data => data.id),
-            title: folderData.map(data => data.title)
-        },
-        file: {
-          title: fileData.map(data => data.title),
-          type: fileData.map(data => data.type),
-          // url: fileData.map(data => data.url), // only needed when the file is clicked
-          id: fileData.map(data => data.id) // I need to send this as after clicking on this file, I need to fetch the file's public url to render it 
-        }
-      }});
-      // this code can be removed
+    // console.log("response");
+    // console.log(folderData);
+    // console.log(fileData)
+    return res.status(200).json({
+      // folder: {
+      //   id: folderData.map((data) => data.id),
+      //   title: folderData.map((data) => data.title),
+      // },
+      // file: {
+      //   title: fileData.map((data) => data.title),
+      //   type: fileData.map((data) => data.type),
+      //   // url: fileData.map(data => data.url), // only needed when the file is clicked
+      //   id: fileData.map((data) => data.id), // I need to send this as after clicking on this file, I need to fetch the file's public url to render it
+      // },
+      folder: folderData.map(data => ({
+        id: data.id,
+        title: data.title
+      })),
+      file: fileData.map((data) => ({
+        id: data.id,
+        title: data.title,
+        type: data.type,
+      }))
+    });
+    // this code can be removed
     // } else {
     //   //  parentId is undefined
     //   const data = await prisma.folder.findMany({
@@ -369,62 +388,42 @@ export async function getFolderAndFilesController(
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 const searchSchema = z.object({
   parentId: z.string().optional(),
   title: z.string(),
-})
+});
 
 //  this will be moved as search query dono folder aur file pe lagegi
 export async function searchFileController(
-  req: Request<{}, {}, {title: string}, IQuery>,
+  req: Request<{}, {}, {}, IQuery>,
   res: Response,
 ) {
+  // console.log("Inside the seach controller");
   try {
     let parentId = req.query.parentId;
-    const { title }= req.body;
+    const title = req.query.title;
 
-    const { success } = searchSchema.safeParse({ parentId: parentId, title: title });
+    const { success, error } = searchSchema.safeParse({
+      parentId: parentId,
+      title: title,
+    });
 
+    // console.log(success);
+    // console.log(error);
+    // console.log(title);
+    // console.log(parentId);
     if (!success) {
       return res.status(400).json({
         message: "Incorrect inputs",
       });
     }
 
-
-
     const userId = req.userId!;
     if (typeof parentId == "string") {
       const isExisting = await prisma.folder.findFirst({
         where: {
           parentId: parentId,
-          userId: userId
+          userId: userId,
         },
       });
 
@@ -439,27 +438,27 @@ export async function searchFileController(
 
     // let data = [];
     // if (typeof parentId == "string") {
-      const folderData = await prisma.folder.findMany({
-        where: {
-          parentId: parentId,
-          userId: userId, // needs userId varna if parentId null then dikkat
-          title: {
-            contains: title,
-            mode: 'insensitive'
-          }
+    const folderData = await prisma.folder.findMany({
+      where: {
+        parentId: parentId,
+        userId: userId, // needs userId varna if parentId null then dikkat
+        title: {
+          contains: title,
+          mode: "insensitive",
         },
-      });
+      },
+    });
 
-      const fileData = await prisma.file.findMany({
-        where: {
-          parentId: parentId,
-          userId: userId, // needs userId varna if parentId null then dikkat
-          title: {
-            contains: title,
-            mode: 'insensitive'
-          }
+    const fileData = await prisma.file.findMany({
+      where: {
+        parentId: parentId,
+        userId: userId, // needs userId varna if parentId null then dikkat
+        title: {
+          contains: title,
+          mode: "insensitive",
         },
-      });
+      },
+    });
 
     // let folderId = [];
     // let folderTitle = [];
@@ -475,20 +474,29 @@ export async function searchFileController(
     //   fileUrl.push(data[i]?.file.map((data) => data.url));
     // }
 
-      return res.status(200).json({
-        data: {
-          folder: {
-            id: folderData.map((data) => data.id),
-            title: folderData.map((data) => data.title),
-          },
-          file: {
-            title: fileData.map((data) => data.title),
-            type: fileData.map((data) => data.type),
-            url: fileData.map((data) => data.url),
-            id: fileData.map((data) => data.id),
-          },
-        },
-      });  } catch {
+    // console.log("Before response");
+    return res.status(200).json({
+      // folder: {
+      //   id: folderData.map((data) => data.id),
+      //   title: folderData.map((data) => data.title),
+      // },
+      // file: {
+      //   title: fileData.map((data) => data.title),
+      //   type: fileData.map((data) => data.type),
+      //   // url: fileData.map((data) => data.url), // no need to send the url
+      //   id: fileData.map((data) => data.id),
+      // },
+      folder: folderData.map((data) => ({
+        id: data.id,
+        title: data.title,
+      })),
+      file: fileData.map((data) => ({
+        id: data.id,
+        title: data.title,
+        type: data.type,
+      })),
+    });
+  } catch {
     return res.status(500).json({
       message: "Internal Server Error",
     });

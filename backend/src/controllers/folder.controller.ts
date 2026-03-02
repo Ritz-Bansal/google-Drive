@@ -64,7 +64,13 @@ export async function createRootFolderController(
   res: Response,
 ) {
   try {
+    console.log("insdide backend route")
+    let {parentId} = req.body;
+    if(parentId == undefined){
+      parentId = null
+    }
     const parsed = createFolderInRootSchema.safeParse(req.body);
+    console.log(parsed.success);
     if (!parsed.success) {
       return res.status(400).json({
         message: "Incorect inputs, Title required",
@@ -78,14 +84,15 @@ export async function createRootFolderController(
       data: {
         userId: userId,
         title: title,
-        parentId: null
+        parentId: parentId
       },
     });
 
+    console.log("Before response");
     return res.status(201).json({
-      folderId: folder.id,
+      id: folder.id,
       title: folder.title,
-      parentId: "root",
+      // parentId: "root",
     });
   } catch {
     return res.status(500).json({

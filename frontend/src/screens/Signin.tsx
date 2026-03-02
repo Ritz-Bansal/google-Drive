@@ -1,0 +1,83 @@
+import Button from "@/components/Button";
+import Footer from "@/components/Footer";
+import InputBox from "@/components/InputBox";
+import api from "@/lib/api";
+import { signinSchema } from "@/validators/auth.validator";
+import { useState, type SetStateAction } from "react";
+import { useNavigate } from "react-router-dom";
+
+function Signin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState<string>("");
+  const [isValid, setIsValid] = useState<boolean>(true);
+  const navigate = useNavigate();
+
+  async function signin() {
+    try {
+      console.log("Before call");
+      const { success } = signinSchema.safeParse({ email, password });
+      console.log(success);
+      console.log(password);
+      console.log(email);
+      if (!success) {
+        setIsValid(false);
+        return;
+      }
+      const response = await api.post("/auth/signin", {
+        email: email,
+        password: password,
+      });
+
+      console.log("After call");
+      if (response.status == 200) {
+        const token = response.data.token;
+        localStorage.setItem("token", token);
+        navigate("/home");
+      }
+    } catch (error: any) {
+      console.log(error);
+      if (error.response.status == 400) {
+        console.log("Bad inputs"); // get this in the inteerceptor, 400 and 401(unauthorised)
+      }
+    }
+  }
+
+  function goToSignup() {
+    navigate("/signup");
+  }
+
+  function onChange<T extends string>(
+    e: React.ChangeEvent<HTMLInputElement>,
+    setter: React.Dispatch<SetStateAction<T>>,
+  ) {
+    setter(e.target.value as T);
+  }
+  return (
+    <div className="grid grid-cols-2 h-screen">
+        <div className="bg-[#3BAD9E] text-white text-5xl flex items-center">
+          <div className="pl-20 font-bold text-[4rem]">
+            <h2>Welcome</h2>
+            <h2 className="mt-2">Back!</h2>
+          </div>
+        </div>
+      <div className="flex items-center justify-center">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          signin();
+        }}
+      >
+        <div>
+          <InputBox setterFunction={setEmail} placeholder="email" header="E-mail" />
+          <InputBox setterFunction={setPassword} placeholder="password" header="Password" />
+        </div>
+        {isValid ? null : "Incorrect Inputs  "}
+        <Button name="Login" onClick={signin} />
+        <Footer navigateTo={goToSignup} content="New User? " link="Sign In" />
+      </form>
+      </div>
+    </div>
+  );
+}
+
+export default Signin;

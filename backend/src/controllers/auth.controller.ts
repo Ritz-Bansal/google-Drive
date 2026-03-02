@@ -9,7 +9,7 @@ const JWT = process.env.JWT!;
 
 export async function signupController (req: Request, res: Response) {
   try {
-    
+    console.log("Inside the function");
     const parsed = signupSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({
@@ -17,7 +17,7 @@ export async function signupController (req: Request, res: Response) {
       });
     }
 
-    const { email, username, gender, password } = parsed.data;
+    const { email, username, password } = parsed.data;
     
     //
     // 1. do not use findMany as it will increase the latency as it would have to go to all the rows, if 100k, it goes to all the 100k
@@ -40,7 +40,7 @@ export async function signupController (req: Request, res: Response) {
     }
 
     const hash = await bcrypt.hash(password, 10);
-
+    let gender: any =""
     const user = await prisma.user.create({
       data: {
         username: username,
@@ -63,6 +63,7 @@ export async function signupController (req: Request, res: Response) {
 
 export async function signinController(req: Request, res: Response)  {
   try {
+    console.log("Inside signin");
     const parsed = signinSchema.safeParse(req.body);
     if (!parsed.success) {
       return res.status(400).json({
@@ -70,20 +71,22 @@ export async function signinController(req: Request, res: Response)  {
       });
     }
 
+    console.log("Correct inputs");
     const { email, password } = parsed.data;
     const user = await prisma.user.findUnique({
       where: {
         email: email,
       },
     });
-
+    console.log(user);
     if (!user) {
       return res.status(404).json({
         message: "User does not exist, please signup first",
       });
     }
 
-    const isValid = bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, user.password);
+    console.log(isValid);
     if (!isValid) {
       return res.status(400).json({
         message: "Incorret password",

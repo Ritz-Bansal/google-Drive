@@ -12,3 +12,8 @@ bank accounts
 
 5. Implement this on this app.
 
+6. make only one route for creating the folder and uploading the file, put the parentId in the
+body and not in the route, in route when updating, in body when I need the data, 
+set parentId null if it is undefined
+
+

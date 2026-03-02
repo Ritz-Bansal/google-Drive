@@ -1,0 +1,33 @@
+import axios from "axios";
+import globalRouter from "./globalRouter";
+
+
+const api = axios.create({
+    baseURL: "http://localhost:3000", // configure the port according to you
+    headers: {
+        "Content-Type": "Application/json"
+    }
+})
+
+
+// intercept the request and check if token is present or not, if not do not send the request to the BE
+
+
+
+api.interceptors.response.use(
+    function onFulfilled(response){
+        return response;
+    }, function onReject(error){
+        // this cannot happen now as I added FE zod and FE zod and BE zod are same, can only happen if the hacker intercepts my req
+        if(error.status == 400){
+            console.log("Wrong inputs");
+        }else 
+            if(error.status == 401){
+            console.log("Unauthorized")
+            globalRouter.navigate!('/signin');
+        }
+        return Promise.reject(error);
+    }
+)
+
+export default api;

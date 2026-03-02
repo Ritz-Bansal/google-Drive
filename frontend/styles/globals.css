@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+
+:root {
+  --font-sans: "Poppins", sans-serif;
+}
+
+/* Tailwind v4 theme mapping */
+@theme {
+  --font-sans: var(--font-sans);
+}
+
+/* Global styles */
+body {
+  @apply font-sans;
+}
