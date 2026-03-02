@@ -47,7 +47,7 @@ function Home() {
     fetch();
   }, []);
   return (
-    <div className="h-screen ">
+    <div>
       <div>
         <TopBar />
         {/* <SearchBar /> */}
@@ -57,7 +57,7 @@ function Home() {
       </div>
       <div>
         {/* <CreateNewFolder setFolders = {setFolders} folders = {folders}/> */}
-        {/* <Modal
+        <Modal
           modalType={"createFolder"}
           isOpen={isCreateOpen}
           setIsOpen={setIsCreateOpen}
@@ -66,7 +66,7 @@ function Home() {
         />
       </div>
       <div>{/* <Upload setFiles={setFiles} files={files}/> */}</div>
-      {/* <div>
+      <div>
         <Modal
           isOpen={isUploadOpen}
           setIsOpen={setIsUploadOpen}
@@ -75,9 +75,9 @@ function Home() {
           type="Upload file"
         />
       </div>
-      <br /> */}
-      {/* {JSON.stringify(folders)}<br/><br/>
-      {JSON.stringify(files)} */}
+      <br />
+      {JSON.stringify(folders)}<br/><br/>
+      {JSON.stringify(files)}
     </div>
   );
 }
