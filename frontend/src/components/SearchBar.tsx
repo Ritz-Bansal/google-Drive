@@ -1,6 +1,7 @@
 import api from "@/lib/api";
 import { DriveContext } from "@/store/DriveContext";
 import type { IFiles, IFolders } from "@/types/interfaces";
+import { Search } from "lucide-react";
 import { useContext, useEffect, useState, type SetStateAction } from "react";
 import { useParams } from "react-router-dom";
 
@@ -41,7 +42,7 @@ function SearchBar(){
         // setInterval or setTimeout, what should I use ? -> setTimeout obvio
         const timer = setTimeout(() => {
             searchData();
-        }, 1000)  // call the seachData after 1 sec
+        }, 500)  // call the seachData after 1 sec
 
         // as soon as another data is typed in this 1 sec, useEffct will re-render and harkirat bhai
         // ne bola ki dusra useEffect call hone pehele, pehele wale ka return/cleanup function 
@@ -51,11 +52,17 @@ function SearchBar(){
         }
     }, [title])
     
-    return (    
-        <div>
-            <input  type="text" placeholder="Seach" className="border-2 rounded-xl w-full" onChange={(e) => setTitle(e.target.value)}/>
-        </div>
-    )
+    return (
+      <div>
+        <Search className="absolute mt-4 text-[#6c6969] font-medium ml-7 w-4 h-4" />
+        <input
+          className="border-0 outline-0 placeholder-[#8C8989] pl-14 font-medium bg-[#E4EFED] rounded-4xl w-full p-3.5"
+          type="text"
+          placeholder="Seach..."
+          onChange={(e) => setTitle(e.target.value)}
+        />
+      </div>
+    );
 }
 
 export default SearchBar;

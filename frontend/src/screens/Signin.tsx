@@ -1,9 +1,10 @@
 import Button from "@/components/Button";
+import Error from "@/components/Error";
 import Footer from "@/components/Footer";
 import InputBox from "@/components/InputBox";
 import api from "@/lib/api";
 import { signinSchema } from "@/validators/auth.validator";
-import { useState, type SetStateAction } from "react";
+import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Signin() {
@@ -52,6 +53,7 @@ function Signin() {
   ) {
     setter(e.target.value as T);
   }
+
   return (
     <div className="grid grid-cols-2 h-screen">
         <div className="bg-[#3BAD9E] text-white text-5xl flex items-center">
@@ -68,11 +70,11 @@ function Signin() {
         }}
       >
         <div>
-          <InputBox setterFunction={setEmail} placeholder="email" header="E-mail" />
+          <InputBox focus={true} setterFunction={setEmail} placeholder="email" header="E-mail" />
           <InputBox setterFunction={setPassword} placeholder="password" header="Password" />
         </div>
-        {isValid ? null : "Incorrect Inputs  "}
         <Button name="Login" onClick={signin} />
+        {isValid ? null : <Error content="Invalid credentials. Please try again." />}
         <Footer navigateTo={goToSignup} content="New User? " link="Sign In" />
       </form>
       </div>

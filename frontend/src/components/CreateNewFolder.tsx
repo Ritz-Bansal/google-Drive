@@ -44,8 +44,10 @@ function CreateNewFolder({setIsOpen}: ICreateNewFolder){
         {/* <DialogDemo modalType={"createFolder"} title="New folder" onSubmit={createNewFolder} isOpen={isOpen} setIsOpen = {setIsOpen}/> */}
         {/* <button  className="border-2" onClick={createNewFolder}>Create new folder</button> */}
         <input type="text" placeholder="Title of the new folder" onChange={(e) => setTitle(e.target.value)}/>
-        <button className="border-2" onClick={createNewFolder}>Create</button>
-        <button onClick={()=> setIsOpen(false)}>Close</button>
+        <div className="flex gap-2 justify-end">
+            <button className="border-2" onClick={createNewFolder}>Create</button>
+            <button className="border-2" onClick={()=> setIsOpen(false)}>Close</button>
+        </div>
       </>
     );
 }

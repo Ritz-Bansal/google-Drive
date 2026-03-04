@@ -1,9 +1,10 @@
 import Button from "@/components/Button";
+import Error from "@/components/Error";
 import Footer from "@/components/Footer";
 import InputBox from "@/components/InputBox";
 import api from "@/lib/api";
 import { signupSchema } from "@/validators/auth.validator";
-import { useState, type SetStateAction } from "react";
+import { useEffect, useRef, useState, type SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
 
 // enum Gender {
@@ -71,12 +72,12 @@ export function Signup(){
           signup();
           }}>
           <div>
-            <InputBox placeholder="Rithvik" header="Full Name" setterFunction={setUsername}/>
+            <InputBox focus={true} placeholder="Rithvik" header="Full Name" setterFunction={setUsername}/>
             <InputBox placeholder="rithvik@example.com" header="E-mail" setterFunction={setEmail}/>
             <InputBox placeholder="pass@123" header="Password" setterFunction={setPassword}/>
 
             <Button name="Sign Up" onClick={signup}/>            
-            {isValid ? null: "Incorrect Inputs  "}
+            {isValid ? null: <Error content="An account with this email already exists." />}
             <Footer content="Already have an account? " link="Login" navigateTo={navigateToSignin} />
 
             {/* <input type="text" autoFocus placeholder="username" className="border-2" onChange={(e) => onChange(e, setUsername)}/><br/> */}

@@ -23,6 +23,7 @@ export function App() {
         <Route element={<Protected/>}>
           <Route path="/home" element={<Home />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/home/:parentId?" element={<Home/>}/>
         </Route>
       </Routes>
     </>

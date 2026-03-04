@@ -19,8 +19,8 @@ api.interceptors.response.use(
         return response;
     }, function onReject(error){
         // this cannot happen now as I added FE zod and FE zod and BE zod are same, can only happen if the hacker intercepts my req
-        if(error.status == 400){
-            console.log("Wrong inputs");
+        if(error.status == 400 || error.status == 404){
+            alert("Wrong inputs");
         }else 
             if(error.status == 401){
             console.log("Unauthorized")

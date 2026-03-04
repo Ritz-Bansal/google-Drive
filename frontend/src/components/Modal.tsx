@@ -26,10 +26,10 @@ import Upload from "./Upload";
 // {isOpen, setIsOpen}: IDialog
 
 // interface IDialog {
-  // title: string;
+//   title: string;
 //   onSubmit: () => void;
-  // isOpen: boolean;
-  // setIsOpen: React.Dispatch<SetStateAction<boolean>>;
+//   isOpen: boolean;
+//   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
 //   modalType: "createFolder" | "uploadFile" | null;
 // }
 
@@ -38,17 +38,13 @@ interface IModal {
   isOpen: boolean;
   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
   title: string;
-  type: string;
 }
 // {title, onSubmit, isOpen, setIsOpen, modalType}
-export function Modal({ modalType, isOpen, setIsOpen, title, type }: IModal) {
+export function Modal({ modalType, isOpen, setIsOpen, title }: IModal) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <form>
-        <DialogTrigger asChild onClick={() => setIsOpen(true)}>
-          <Button variant="outline">{type}</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-sm">
+        <DialogContent className="sm:max-w-sm rounded-3xl sm:min-h-48 bg-white border-0">
           <DialogHeader>
             <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
@@ -59,3 +55,51 @@ export function Modal({ modalType, isOpen, setIsOpen, title, type }: IModal) {
     </Dialog>
   );
 }
+
+
+// import { Button } from "@/components/ui/button";
+// import {
+//   Dialog,
+//   DialogClose,
+//   DialogContent,
+//   DialogDescription,
+//   DialogFooter,
+//   DialogHeader,
+//   DialogTitle,
+//   DialogTrigger,
+// } from "@/components/ui/dialog";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+
+// export function Modal({ modalType, isOpen, setIsOpen, title }: IModal) {
+//   return (
+//     <Dialog open={isOpen} onOpenChange={setIsOpen}>
+//       <form>
+//         <DialogContent className="data-[state=open]:!zoom-in-0 data-[state=open]:duration-600 sm:max-w-[425px]">
+//           <DialogHeader>
+//             <DialogTitle></DialogTitle>
+//           </DialogHeader>
+//           <div className="grid gap-4">
+//             <div className="grid gap-3">
+//               <Label htmlFor="name-1">Name</Label>
+//               <Input id="name-1" name="name" defaultValue="Pedro Duarte" />
+//             </div>
+//             <div className="grid gap-3">
+//               <Label htmlFor="username-1">Username</Label>
+//               <Input id="username-1" name="username" defaultValue="@peduarte" />
+//             </div>
+//           </div>
+//           <DialogFooter>
+//             <DialogClose asChild>
+//               <Button variant="outline">Cancel</Button>
+//             </DialogClose>
+//             <Button type="submit">Save changes</Button>
+//           </DialogFooter>
+//         </DialogContent>
+//       </form>
+//     </Dialog>
+//   );
+// };
+
+// export default DialogZoomInDemo;
+
