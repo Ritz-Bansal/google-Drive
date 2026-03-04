@@ -48,7 +48,7 @@ export function Signup(){
             console.log("After api call");
 
             if(response.status == 201){
-              navigate("/"); // routing to the landing page
+              navigate("/signin"); // routing to the landing page
             }
 
           }catch(error: any){

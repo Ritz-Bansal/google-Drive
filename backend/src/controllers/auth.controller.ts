@@ -7,7 +7,7 @@ import "dotenv/config";
 
 const JWT = process.env.JWT!;
 
-export async function signupController (req: Request, res: Response) {
+export async function signupController(req: Request, res: Response) {
   try {
     console.log("Inside the function");
     const parsed = signupSchema.safeParse(req.body);
@@ -18,8 +18,7 @@ export async function signupController (req: Request, res: Response) {
     }
 
     const { email, username, password } = parsed.data;
-    
-    //
+
     // 1. do not use findMany as it will increase the latency as it would have to go to all the rows, if 100k, it goes to all the 100k
     // rows, jabki hamara kaam 1 row se hi ho jayega, if we use findFirst, it is optimised, as suppose 100k rows hai, but wwe found
     // that at 10k row, therefore no need to query more rows, worst case mein it would be 100k only.
@@ -27,7 +26,7 @@ export async function signupController (req: Request, res: Response) {
     // 2. suppose I found 10k rows with the same email, then I/O cost bohot zyada, i.e, data ko ek jagah se dusri jagah leke jaane
     // ka cost is very much, whereas in findFirst even if 10k rows with the same email exist, we will send only one data, this is
     // the biggest cost and needs to be optimised --> expensive than any other thing, waah kya socha hai
-    const existing = await prisma.user.findFirst({ 
+    const existing = await prisma.user.findFirst({
       where: {
         email: email,
       },
@@ -40,13 +39,11 @@ export async function signupController (req: Request, res: Response) {
     }
 
     const hash = await bcrypt.hash(password, 10);
-    let gender: any =""
     const user = await prisma.user.create({
       data: {
         username: username,
         password: hash,
-        gender: gender,
-        email: email
+        email: email,
       },
     });
 
@@ -61,7 +58,7 @@ export async function signupController (req: Request, res: Response) {
   }
 }
 
-export async function signinController(req: Request, res: Response)  {
+export async function signinController(req: Request, res: Response) {
   try {
     console.log("Inside signin");
     const parsed = signinSchema.safeParse(req.body);
