@@ -21,7 +21,7 @@ function CreateNewFolder({setIsOpen}: ICreateNewFolder){
     async function createNewFolder(){
         console.log("Insde the frontedn function");
         try{
-            const response = await api.post("/create", {
+            const response = await api.post("/folder/create", {
                 title: title, 
                 parentId: parentId
             }, {headers: {

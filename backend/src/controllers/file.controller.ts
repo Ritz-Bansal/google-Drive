@@ -398,10 +398,11 @@ export async function searchFileController(
   req: Request<{}, {}, {}, IQuery>,
   res: Response,
 ) {
-  // console.log("Inside the seach controller");
+  console.log("Inside the seach controller");
   try {
     let parentId = req.query.parentId;
     const title = req.query.title;
+    console.log(title); 
 
     const { success, error } = searchSchema.safeParse({
       parentId: parentId,

@@ -23,7 +23,7 @@ function Upload({setIsOpen}: IUpload){
     async function upload(){
         try{
             console.log("before presign");
-            const response = await api.post("/presigned", {
+            const response = await api.post("/file/presigned", {
                 type: type
             }, {headers: {
                 Authorization: "Bearer " + localStorage.getItem('token')
@@ -53,7 +53,7 @@ function Upload({setIsOpen}: IUpload){
                     console.log(title);
                     console.log(type);
                     console.log(parentId);
-                    const responsex = await api.post("/upload", {
+                    const responsex = await api.post("/file/upload", {
                         title: title, 
                         type: type,
                         fileUrl: response.data.finalUrl,

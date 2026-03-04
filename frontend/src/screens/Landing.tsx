@@ -1,20 +1,20 @@
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 
 
-function Landing(){
-    const navigate = useNavigate();
+// function Landing(){
 
-    return (
-      <>
-        <div className="border-2 rounded-2xl m-2">
-          <button onClick={() => navigate("/signup")}>Signup Button</button>
-        </div>
+//     return (
+//       <>
+//       {navigate("/signup")}
+//         {/* <div className="border-2 rounded-2xl m-2">
+//           <button onClick={() => navigate("/signup")}>Signup Button</button>
+//         </div>
 
-        <div className="border-2 rounded-2xl m-2">
-          <button onClick={() => navigate("/signin")}>Signin Button</button>
-        </div>
-      </>
-    );
-}
+//         <div className="border-2 rounded-2xl m-2">
+//           <button onClick={() => navigate("/signin")}>Signin Button</button>
+//         </div> */}
+//       </>
+//     );
+// }
 
-export default Landing;
+// export default Landing;

@@ -18,7 +18,7 @@ function File({id, title, type, size}: IFile){
 
     async function fileClick(id: string){
       try{
-        const response = await api.get(`/file/${id}`, {
+        const response = await api.get(`/file/fetch/${id}`, {
           headers: {
             Authorization: "Bearer " + localStorage.getItem('token')
           }

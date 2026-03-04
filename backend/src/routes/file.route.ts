@@ -6,7 +6,7 @@ const fileRouter = express.Router();
 fileRouter.post("/presigned", getPresignedUrlController);
 fileRouter.post("/upload/:parentId", createParentFileController);
 fileRouter.post("/upload", createRootFileController);
-fileRouter.get("/file/:fileId", fetchFileController)
+fileRouter.get("/fetch/:fileId", fetchFileController)
 
 // last mein
 // fileRouter.get("/allFiles", getAllFileController); -->> get all files -> images, videoos and pdfs

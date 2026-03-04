@@ -30,7 +30,7 @@ function Home() {
   async function fetch() {
     try {
       const token = localStorage.getItem("token");
-      const response = await api.get("/check", {
+      const response = await api.get("/file/check", {
         params: {
           parentId: parentId,
         },

@@ -12,7 +12,7 @@ import { useParams } from "react-router-dom";
 // {setFiles, setFolders}: ISearchBar
 function SearchBar(){
     const [title, setTitle] = useState("");
-    const {setFolders, setFiles} = useContext(DriveContext);
+    const {setFolders, setFiles} = useContext(DriveContext)!;
     
     const { parentId } = useParams();
     async function searchData(){
@@ -20,7 +20,7 @@ function SearchBar(){
             console.log(title);
             console.log(parentId);
             const token = localStorage.getItem('token');
-            const response = await api.get("/search", { // get mein body nai bhejna
+            const response = await api.get("/file/search", { // get mein body nai bhejna
                 params: {
                     parentId: parentId,
                     title: title
