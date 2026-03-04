@@ -86,7 +86,7 @@ function MainContent() {
         <h2 className="text-lg text-[#8C8989] font-bold">ALL FILES</h2>
         <div className="flex justify-between text-[#3BAD9E] font-medium mt-3">
           <div>NAME</div>
-          <div className="mr-10">FILE SIZE</div>
+          <div className="mr-12">FILE SIZE</div>
         </div>
         {/* <ScrollBar /> */}
         <div className="h-48 overflow-y-auto no-scrollbar">

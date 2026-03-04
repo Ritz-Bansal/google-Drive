@@ -1,14 +1,12 @@
 import axios from "axios";
 import globalRouter from "./globalRouter";
 
-
 const api = axios.create({
-    baseURL: "http://localhost:3000", // configure the port according to you
-    headers: {
-        "Content-Type": "Application/json"
-    }
-})
-
+  baseURL: `https://google-drive-zeee.onrender.com`, // configure the port according to you
+  headers: {
+    "Content-Type": "Application/json",
+  },
+});
 
 // intercept the request and check if token is present or not, if not do not send the request to the BE
 

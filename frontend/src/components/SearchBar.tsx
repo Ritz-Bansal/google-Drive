@@ -54,11 +54,11 @@ function SearchBar(){
     
     return (
       <div>
-        <Search className="absolute mt-4 text-[#6c6969] font-medium ml-7 w-4 h-4" />
+        <Search className="absolute mt-4.5 text-[#6c6969] font-medium ml-7 w-4 h-4" />
         <input
           className="border-0 outline-0 placeholder-[#8C8989] pl-14 font-medium bg-[#E4EFED] rounded-4xl w-full p-3.5"
           type="text"
-          placeholder="Seach..."
+          placeholder="Search..."
           onChange={(e) => setTitle(e.target.value)}
         />
       </div>

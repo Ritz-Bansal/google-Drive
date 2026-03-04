@@ -6,12 +6,28 @@
   --font-sans: "Poppins", sans-serif;
 }
 
-/* Tailwind v4 theme mapping */
 @theme {
   --font-sans: var(--font-sans);
 }
 
-/* Global styles */
 body {
   @apply font-sans;
+}
+
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #8C8989;
 }
