@@ -70,8 +70,8 @@ function Signin() {
         }}
       >
         <div>
-          <InputBox focus={true} setterFunction={setEmail} placeholder="email" header="E-mail" />
-          <InputBox setterFunction={setPassword} placeholder="password" header="Password" />
+          <InputBox focus={true} setterFunction={setEmail} header="E-mail" />
+          <InputBox setterFunction={setPassword} header="Password" />
         </div>
         <Button name="Login" onClick={signin} />
         {isValid ? null : <Error content="Invalid credentials. Please try again." />}

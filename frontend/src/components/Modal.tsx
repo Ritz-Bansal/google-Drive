@@ -42,11 +42,11 @@ interface IModal {
 // {title, onSubmit, isOpen, setIsOpen, modalType}
 export function Modal({ modalType, isOpen, setIsOpen, title }: IModal) {
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen} >
       <form>
-        <DialogContent className="sm:max-w-sm rounded-3xl sm:min-h-48 bg-white border-0">
+        <DialogContent className="sm:max-w-sm rounded-3xl sm:min-h-48 bg-[#E4EFED] border-0">
           <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
+            <DialogTitle className="font-semibold text-2xl pl-4 text-[#3BAD9E]">{title}</DialogTitle>
           </DialogHeader>
             {modalType === "createFolder" && <CreateNewFolder setIsOpen={setIsOpen} />}
             {modalType === "uploadFile" && <Upload setIsOpen={setIsOpen}/>}

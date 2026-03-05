@@ -72,9 +72,9 @@ export function Signup(){
           signup();
           }}>
           <div>
-            <InputBox focus={true} placeholder="Rithvik" header="Full Name" setterFunction={setUsername}/>
-            <InputBox placeholder="rithvik@example.com" header="E-mail" setterFunction={setEmail}/>
-            <InputBox placeholder="pass@123" header="Password" setterFunction={setPassword}/>
+            <InputBox focus={true}  header="Full Name" setterFunction={setUsername}/>
+            <InputBox  header="E-mail" setterFunction={setEmail}/>
+            <InputBox  header="Password" setterFunction={setPassword}/>
 
             <Button name="Sign Up" onClick={signup}/>            
             {isValid ? null: <Error content="An account with this email already exists." />}

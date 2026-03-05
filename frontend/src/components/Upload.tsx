@@ -3,6 +3,8 @@ import { DriveContext } from "@/store/DriveContext";
 import type { IFiles } from "@/types/interfaces";
 import { useContext, useState, type SetStateAction } from "react";
 import { useParams } from "react-router-dom";
+import InputBox from "./InputBox";
+import Button from "./Button";
 
 interface IUpload{
     // setFiles: React.Dispatch<SetStateAction<IFiles[]>>;
@@ -82,11 +84,33 @@ function Upload({setIsOpen}: IUpload){
         <>
         {/* <DialogDemo modalType={"uploadFile"} title="Upload file" isOpen={isOpen} setIsOpen={setIsOpen} onSubmit={upload} /> */}
         {/* <button onClick={upload}>Upload file</button> */}
-        <input type="file" className="border-2" placeholder="upload here" onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}/>
+        <form onSubmit={(e)=>{
+            e.preventDefault();
+            upload();
+        }}>
+        {/* <InputBox placeholder="Choose File" setterFunction={setUploadFile} type="file" /> */}
+        <div >
+            <input id="upload-photo" type="file" onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}
+                className="hidden"
+                // className="border-[#3BAD9E] border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 w-full text-left mb-4"
+                accept="image/*, pdf, video/*"
+            />
+            <label htmlFor="upload-photo"
+            className="border-[#3BAD9E] text-[1.2rem] block w-full text-[#6c6969] pl-5 border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 text-left mb-4"
+            >
+                Choose File
+            </label>
+        </div>
+        {/* <input type="file" className="border-2" placeholder="upload here" onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}/> */}
         <input type="text"  placeholder="File title" onChange={(e) => setTitle(e.target.value)}/>
         <input type="text" placeholder="File type" onChange={(e) => setType(e.target.value)}/>
-        <button className="border-2" onClick={upload}>Upload file</button>
-        <button onClick={()=> setIsOpen(false)}>Close</button>
+        {/* <button className="border-2" onClick={upload}>Upload file</button>
+        <button onClick={()=> setIsOpen(false)}>Close</button> */}
+        <div className="flex gap-2 justify-end">
+            <Button name="Upload File" onClick={upload} isDialog={true} />
+            <Button name="Close" onClick={()=> setIsOpen(false)} isDialog={true} />
+        </div>
+        </form>
         {/* {console.log(uploadFile)}
         {console.log(files)} */}
         </>

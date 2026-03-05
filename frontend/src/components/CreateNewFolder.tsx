@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import api from "@/lib/api";
 import type { IFolders } from "@/types/interfaces";
 import { DriveContext } from "@/store/DriveContext";
+import InputBox from "./InputBox";
+import Button from "./Button";
 
 
 interface ICreateNewFolder {
@@ -43,11 +45,19 @@ function CreateNewFolder({setIsOpen}: ICreateNewFolder){
       <>
         {/* <DialogDemo modalType={"createFolder"} title="New folder" onSubmit={createNewFolder} isOpen={isOpen} setIsOpen = {setIsOpen}/> */}
         {/* <button  className="border-2" onClick={createNewFolder}>Create new folder</button> */}
-        <input type="text" placeholder="Title of the new folder" onChange={(e) => setTitle(e.target.value)}/>
+        {/* <input type="text" placeholder="Title of the new folder" onChange={(e) => setTitle(e.target.value)}/> */}
+        <form onSubmit={(e)=>{
+            e.preventDefault();
+            createNewFolder();
+        }}>
+        <InputBox placeholder="Title of the New Folder" setterFunction={setTitle} />
         <div className="flex gap-2 justify-end">
-            <button className="border-2" onClick={createNewFolder}>Create</button>
-            <button className="border-2" onClick={()=> setIsOpen(false)}>Close</button>
+            {/* <button className="border-2" onClick={createNewFolder}>Create</button>
+            <button className="border-2" onClick={()=> setIsOpen(false)}>Close</button> */}
+            <Button name="Create" onClick={createNewFolder} isDialog={true}/>
+            <Button name="Close" onClick={()=> setIsOpen(false)} isDialog={true}/> 
         </div>
+        </form>
       </>
     );
 }
