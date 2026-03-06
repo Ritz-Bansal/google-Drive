@@ -41,9 +41,9 @@ function Signin() {
       setIsDisable(false);
     } catch (error: any) {
       console.log(error);
-      if (error.response.status == 400) {
-        console.log("Bad inputs"); // get this in the inteerceptor, 400 and 401(unauthorised)
-      }
+      // if (error.response.status == 400) {
+        // console.log("Bad inputs"); // get this in the inteerceptor, 400 and 401(unauthorised)
+      // }
       setIsDisable(false);
     }
   }

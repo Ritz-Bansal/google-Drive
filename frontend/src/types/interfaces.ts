@@ -8,4 +8,5 @@ export interface IFiles {
     id: string;
     title: string;
     type: string;
+    size: number;
 }

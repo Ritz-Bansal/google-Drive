@@ -11,6 +11,7 @@ export const uploadRootFileSchema = zod.object({
   title: zod.string(),
   fileUrl: zod.url(),
   parentId: zod.uuid().nullable(),
+  size: zod.number()
   //   type: zod.enum(["video", "image", "pdf"]),
 });
 

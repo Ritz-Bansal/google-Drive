@@ -67,7 +67,7 @@ function CreateNewFolder({setIsOpen}: ICreateNewFolder){
         <div className="flex gap-2 justify-end">
             {/* <button className="border-2" onClick={createNewFolder}>Create</button>
             <button className="border-2" onClick={()=> setIsOpen(false)}>Close</button> */}
-            <Button name="Create" onClick={createNewFolder} isDialog={true} isDisable={isDisable}/>
+            <Button name="Create" isDialog={true} isDisable={isDisable}/>
             <Button name="Close" onClick={()=> setIsOpen(false)} isDialog={true} isDisable={isDisable}/> 
         </div>
         </form>

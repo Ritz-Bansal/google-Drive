@@ -33,7 +33,8 @@ function Upload({setIsOpen}: IUpload){
             setIsDisable(true);
             // await new Promise(()=> {});
             const response = await api.post("/file/presigned", {
-                type: uploadedFile?.type
+                type: uploadedFile?.type,
+                size: uploadedFile?.size
             }, {headers: {
                 Authorization: "Bearer " + localStorage.getItem('token')
             }});
@@ -66,7 +67,8 @@ function Upload({setIsOpen}: IUpload){
                         title: uploadedFile?.name, 
                         type: uploadedFile?.type,
                         fileUrl: response.data.finalUrl,
-                        parentId: parentId
+                        parentId: parentId,
+                        size: uploadedFile?.size
                     }, {headers: {
                         Authorization: "Bearer " + localStorage.getItem('token')
                     }});
@@ -90,43 +92,62 @@ function Upload({setIsOpen}: IUpload){
     }
     
     return (
-        <>
+      <>
         {/* <DialogDemo modalType={"uploadFile"} title="Upload file" isOpen={isOpen} setIsOpen={setIsOpen} onSubmit={upload} /> */}
-        {/* <button onClick={upload}>Upload file</button> */}
-        <form onSubmit={(e)=>{
+        {/* <button onClick={upload}>Upload file</button> */} 
+        {/* {(e) => {
+          if (e.key === "Enter") {
             e.preventDefault();
             upload();
-        }}>
-        {/* <InputBox placeholder="Choose File" setterFunction={setUploadFile} type="file" /> */}
-        <div >
-            <input id="upload-photo" type="file" onChange={(e) => {
-                console.log(e.target.files?.[0] ?? null);
-                setUploadedFile(e.target.files?.[0] ?? null)}}
-                className="hidden"
-                // className="border-[#3BAD9E] border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 w-full text-left mb-4"
-                accept="image/*, pdf, video/*"
-            />
-            <label htmlFor="upload-photo"
-            className="border-[#3BAD9E] text-[1.2rem] block w-full text-[#6c6969] pl-5 border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 text-left mb-4"
-            >
-                {uploadedFile ? uploadedFile.name : "Choose File"}
-                {/* {console.log(uploadFile)} */}
-            </label>
-        </div>
-        {/* <input type="file" className="border-2" placeholder="upload here" onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}/> */}
-        {/* <input type="text"  placeholder="File title" onChange={(e) => setTitle(e.target.value)}/>
+          }
+        }} */}
+        <form
+          className="max-w-[335px]"
+          onSubmit={(e) => {
+            e.preventDefault();
+            upload();
+          }}
+        >
+          {/* <InputBox placeholder="Choose File" setterFunction={setUploadFile} type="file" /> */}
+
+          <input
+            id="upload-photo"
+            type="file"
+            onChange={(e) => {
+              console.log(e.target.files?.[0] ?? null);
+              setUploadedFile(e.target.files?.[0] ?? null);
+            }}
+            className="hidden"
+            // className="border-[#3BAD9E] border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 w-full text-left mb-4"
+            accept="image/*, pdf, video/*"
+          />
+          <label
+            htmlFor="upload-photo"
+            className="border-[#3BAD9E] text-[1.2rem] block truncate text-[#6c6969] pl-5 border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 text-left mb-4"
+          >
+            {uploadedFile ? uploadedFile.name : "Choose File"}
+            {/* {console.log(uploadFile)} */}
+          </label>
+
+          {/* <input type="file" className="border-2" placeholder="upload here" onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}/> */}
+          {/* <input type="text"  placeholder="File title" onChange={(e) => setTitle(e.target.value)}/>
         <input type="text" placeholder="File type" onChange={(e) => setType(e.target.value)}/> */}
-        {/* <button className="border-2" onClick={upload}>Upload file</button>
+          {/* <button className="border-2" onClick={upload}>Upload file</button>
         <button onClick={()=> setIsOpen(false)}>Close</button> */}
-        <div className="flex gap-2 justify-end w-full">
-            <Button name="Upload File" onClick={upload} isDialog={true} isDisable={isDisable}/>
-            <Button name="Close" onClick={()=> setIsOpen(false)} isDialog={true} isDisable={isDisable}/>
-        </div>
+          <div className="flex gap-2 justify-end w-full">
+            <Button name="Upload File" isDialog={true} isDisable={isDisable} />
+            <Button
+              name="Close"
+              onClick={() => setIsOpen(false)}
+              isDialog={true}
+              isDisable={isDisable}
+            />
+          </div>
         </form>
         {/* {console.log(uploadFile)}
         {console.log(files)} */}
-        </>
-    )
+      </>
+    );
 }
 
 export default Upload;

@@ -101,7 +101,8 @@ export async function signinController(req: Request, res: Response) {
       message: "Signin successful",
       token: token,
     });
-  } catch {
+  } catch(error) {
+    console.log(error);
     return res.status(500).json({
       message: "Internal server error",
     });

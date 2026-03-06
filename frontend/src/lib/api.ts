@@ -1,6 +1,6 @@
 import axios from "axios";
 import globalRouter from "./globalRouter";
-
+// http://localhost:3000
 
 
 const api = axios.create({
@@ -16,6 +16,9 @@ const api = axios.create({
 
 api.interceptors.response.use(
     function onFulfilled(response){
+        if(response.status == 400){
+            console.log("Inside the onFUlfilled ", response)
+        }
         return response;
     }, function onReject(error){
         // this cannot happen now as I added FE zod and FE zod and BE zod are same, can only happen if the hacker intercepts my req
@@ -23,7 +26,10 @@ api.interceptors.response.use(
             alert("Wrong inputs");
         }else if(error.status == 409){
             alert("Email taken");
-        }else 
+        }else if(error.status == 402){
+            alert("Upgrade to premium to get more storage");
+        }
+        else 
             if(error.status == 401){
             console.log("Unauthorized")
             globalRouter.navigate!('/signin');

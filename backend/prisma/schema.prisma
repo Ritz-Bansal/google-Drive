@@ -48,6 +48,7 @@ model File {
   parentId String?        // root will have the folderId to be null
   user    User  @relation(fields: [userId], references: [id])
   userId  String
+  size    Int // can use BigInt but that is unnecessary as int range - enough to store 1TB (isse bohot zyada)
 }
 
 // enum FileType {

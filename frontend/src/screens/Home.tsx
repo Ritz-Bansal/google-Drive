@@ -42,6 +42,7 @@ function Home() {
       });
 
       if (response.status == 200) {
+        console.log(response.data.file);
         setFiles(response.data.file);
         setFolders(response.data.folder);
       }

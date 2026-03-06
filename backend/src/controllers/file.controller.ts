@@ -15,6 +15,7 @@ import {
 import { typeAndContentType } from "../services/typeAndContentType.js";
 import { prisma } from "../lib/client.js";
 import z from "zod";
+import { presignedurlSchema } from "../validators/folder.validator.js";
 
 const R2_URL = process.env.R2_URL!;
 const R2_ACCESS_KEY_ID = process.env.R2_ACCESS_KEY_ID!;
@@ -40,27 +41,37 @@ export async function getPresignedUrlController(req: Request, res: Response) {
   // to save server cost
   try {
     console.log("Inside the presigned url");
-    const { type } = req.body;
+    const { type, size } = req.body;
     
-    // const { success } = presignedurlSchema.safeParse({ type: type });
+    const { success } = presignedurlSchema.safeParse(req.body);
 
-    // if (!success) {
-    //   return res.status(400).json({
-    //     message: "Upload either a video, pdf or a image only",
-    //   });
-    // }
-
-    if(!type){
+    if (!success) {
       return res.status(400).json({
-        message: "File type is required.",
-      })
+        message: "Incorrect inputs, file type and file size is required",
+      });
     }
+
 
     const { extension, contentType } = typeAndContentType(type);
     
     if(contentType == null){
       return res.status(400).json({
         message: "Upload either a video, image or pdf only"
+      })
+    }
+
+    const userId = req.userId!;
+    const totalSize = await prisma.file.aggregate({
+      _sum: { size: true },
+      where: {
+        userId: userId
+      }
+    })
+
+    const maxSize: number = 1024*1024*1024; // 1 GB
+    if(totalSize._sum.size + size > maxSize){
+      return res.status(402).json({
+        message: "Upgrade to premium to get more storage"
       })
     }
 
@@ -72,7 +83,7 @@ export async function getPresignedUrlController(req: Request, res: Response) {
         Bucket: "youtube-100xdevs",
         Key: pathName,
         ContentType: contentType,
-        // ContentLength: bytes -- optional hai bhai
+        ContentLength: size, //bytes -- optional hai bhai
         IfNoneMatch: "*",
         // always needed, kyuki if the different files are uploaded in the same location then the latest file will be used -- dikkat
         // this ensures ki file ek baar hi jaaye iss presigned url pe as it checks does the object in this bucket at this key exists or not, if not karle upload
@@ -144,16 +155,21 @@ export async function getPresignedUrlController(req: Request, res: Response) {
 
 export async function createRootFileController(req: Request, res: Response) {
   try {
+    // I think no need to check file size wala here, as agar S3 mein hi nahi dala toh yaha 
+    // pe daal bhi diya toh kya karlega, kuch nahi kar payega
+    // 1 thing jo they can do is use their S3 and upload in my DB, but no one will do that as
+    // if I delete the table, they will be fucked, so it's fine not to check here
     console.log("Inside the upload file");
     let { parentId } = req.body;
-    const { title, fileUrl, type } = req.body;
+    const { title, fileUrl, type, size } = req.body;
     if(parentId == undefined){
       parentId = null;
     }
     const { success, error } = uploadRootFileSchema.safeParse({
       title: title,
       fileUrl: fileUrl,
-      parentId: parentId
+      parentId: parentId,
+      size: size,
       // type: type,
     });
 
@@ -182,6 +198,7 @@ export async function createRootFileController(req: Request, res: Response) {
         parentId: parentId,
         type: type,
         userId: userId,
+        size: size
       },
     });
 
@@ -191,7 +208,8 @@ export async function createRootFileController(req: Request, res: Response) {
       // fileUrl: uploadedFile.url,
       title: uploadedFile.title,
       // parentId: uploadedFile.parentId,
-      type: uploadedFile.type
+      type: uploadedFile.type,
+      size: size
     });
   } catch (error) {
     res.status(500).json({
@@ -366,6 +384,7 @@ export async function getFolderAndFilesController(
         id: data.id,
         title: data.title,
         type: data.type,
+        size: data.size
       }))
     });
     // this code can be removed
@@ -521,6 +540,7 @@ export async function searchFileController(
         id: data.id,
         title: data.title,
         type: data.type,
+        size: data.size
       })),
     });
   } catch {

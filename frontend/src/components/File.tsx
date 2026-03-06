@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import image from "../assets/image.png";
 import pdf from "../assets/pdf.png";
 import video from "../assets/video.png"
+import { sizeFormatter } from "@/lib/sizeFormatter";
 
 interface IFile{
   id: string;
@@ -12,11 +13,23 @@ interface IFile{
 }
 
 function File({id, title, contentType, size}: IFile){
-    let gb = false;
-    if(size >= 1000){
-      size = size/1000;
-      gb = true;
-    }
+    // let kb = false;
+    // if(size >= 1024){
+    //   size = size/1024;
+    //   kb = true;
+    // }
+
+    console.log("Size is ",size);
+    // let kb = false;
+    // let displaySize = size;
+
+    // if (size >= 1024) {
+    //   displaySize = size / 1024;
+    //   kb = true;
+    // }
+    // const displaySizee = displaySize.toFixed(1);
+
+    const {displaySize, displayType} = sizeFormatter(size);
 
     async function fileClick(id: string){
       try{
@@ -38,13 +51,13 @@ function File({id, title, contentType, size}: IFile){
     const type = contentTypeParts[0] == "image" ? "image" : contentTypeParts[0] == "video" ? "video" : "pdf"
 
     return (
-      <div id={id} onClick={()=> fileClick(id)} className="border-b-2 flex items-center justify-between border-gray-100 pb-4 ">
+      <div onClick={()=> fileClick(id)} className="border-b-2 flex items-center justify-between border-gray-100 pb-4 ">
         <div className="flex mt-5">
           <img src={type == "image" ? image : type == "video" ? video : pdf } className="w-[15px] max-h-[15px] mt-1.5 mr-2" />
           <p>{title}</p>
         </div>
         <div className="pl-7 flex mt-5 h-full">
-          <p className="min-w-[75px] text-center mr-8">{gb ? size+" GB" : size+" MB"}</p>
+          <p className="min-w-[75px] text-center mr-8">{displaySize + " " + displayType}</p>
         </div>
       </div>
     );

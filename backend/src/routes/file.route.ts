@@ -9,7 +9,7 @@ fileRouter.post("/upload", createRootFileController);
 fileRouter.get("/fetch/:fileId", fetchFileController)
 
 // last mein
-// fileRouter.get("/allFiles", getAllFileController); -->> get all files -> images, videoos and pdfs
+// fileRouter.get("/allFiles, getAllFileController); -->> get all files -> images, videoos and pdfs
 // fileRouter.get("/getAllImages", getAllImagesController); --> gets all images and so on
 // fileRouter.get("/getAllPdfs", getAllPdfsController);
 // fileRouter.get("/getAllVideos", getAllVideosController);
