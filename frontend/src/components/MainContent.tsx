@@ -98,7 +98,7 @@ function MainContent({isLoading}: IMainContent) {
         {/* <ScrollBar /> */}
         <div className="h-48 overflow-y-auto no-scrollbar">
           {isLoading? <FileSkeleton />:files.map((file) => (
-            <File id={file.id} title={file.title} type={file.type} size={100} />
+            <File id={file.id} title={file.title} contentType={file.type} size={100} />
           ))}
         </div>
       </div>

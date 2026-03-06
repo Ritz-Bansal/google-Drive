@@ -8,7 +8,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import "dotenv/config";
 import {
   fetchFileSchema,
-  presignedurlSchema,
+  // presignedurlSchema,
   uploadParentFileSchema,
   uploadRootFileSchema,
 } from "../validators/file.validator.js";
@@ -41,17 +41,30 @@ export async function getPresignedUrlController(req: Request, res: Response) {
   try {
     console.log("Inside the presigned url");
     const { type } = req.body;
-    const { success } = presignedurlSchema.safeParse({ type: type });
+    
+    // const { success } = presignedurlSchema.safeParse({ type: type });
 
-    if (!success) {
+    // if (!success) {
+    //   return res.status(400).json({
+    //     message: "Upload either a video, pdf or a image only",
+    //   });
+    // }
+
+    if(!type){
       return res.status(400).json({
-        message: "Upload either a video, pdf or a image only",
-      });
+        message: "File type is required.",
+      })
     }
 
     const { extension, contentType } = typeAndContentType(type);
+    
+    if(contentType == null){
+      return res.status(400).json({
+        message: "Upload either a video, image or pdf only"
+      })
+    }
 
-    const pathName = "googleDrive/rithvik/" + Math.random() + `${extension}`; // put the extension here, is it even needed ?
+    const pathName = "googleDrive/rithvik/" + Math.random() + `.${extension}`; // put the extension here, is it even needed ?
 
     const putUrl = await getSignedUrl(
       S3,
@@ -83,49 +96,51 @@ export async function getPresignedUrlController(req: Request, res: Response) {
   }
 }
 
-export async function createParentFileController(
-  req: Request<IParams>,
-  res: Response,
-) {
-  try {
-    const parentId = req.params.parentId;
-    const { title, fileUrl, type } = req.body;
-    const { success } = uploadParentFileSchema.safeParse({
-      title: title,
-      parentId: parentId,
-      fileUrl: fileUrl,
-      type: type,
-    });
+// export async function createParentFileController(
+//   req: Request<IParams>,
+//   res: Response,
+// ) {
+//   try {
+//     const parentId = req.params.parentId;
+//     const { title, fileUrl, type } = req.body;
+//     const { success } = uploadParentFileSchema.safeParse({
+//       title: title,
+//       parentId: parentId,
+//       fileUrl: fileUrl,
+//       // type: type,
+//     });
 
-    if (!success) {
-      return res.status(400).json({
-        message: "Incorrect Inputs",
-      });
-    }
 
-    const userId = req.userId!;
-    const uploadedFile = await prisma.file.create({
-      data: {
-        title: title,
-        url: fileUrl,
-        parentId: parentId,
-        type: type,
-        userId: userId,
-      },
-    });
 
-    return res.status(201).json({
-      fileId: uploadedFile.id,
-      fileUrl: uploadedFile.url,
-      title: uploadedFile.title,
-      parentId: uploadedFile.parentId,
-    });
-  } catch {
-    res.status(500).json({
-      message: "Internal server error",
-    });
-  }
-}
+//     if (!success) {
+//       return res.status(400).json({
+//         message: "Incorrect Inputs",
+//       });
+//     }
+
+//     const userId = req.userId!;
+//     const uploadedFile = await prisma.file.create({
+//       data: {
+//         title: title,
+//         url: fileUrl,
+//         parentId: parentId,
+//         type: type,
+//         userId: userId,
+//       },
+//     });
+
+//     return res.status(201).json({
+//       fileId: uploadedFile.id,
+//       fileUrl: uploadedFile.url,
+//       title: uploadedFile.title,
+//       parentId: uploadedFile.parentId,
+//     });
+//   } catch {
+//     res.status(500).json({
+//       message: "Internal server error",
+//     });
+//   }
+// }
 
 export async function createRootFileController(req: Request, res: Response) {
   try {
@@ -138,7 +153,8 @@ export async function createRootFileController(req: Request, res: Response) {
     const { success, error } = uploadRootFileSchema.safeParse({
       title: title,
       fileUrl: fileUrl,
-      type: type,
+      parentId: parentId
+      // type: type,
     });
 
     console.log(error);
@@ -148,7 +164,16 @@ export async function createRootFileController(req: Request, res: Response) {
         message: "Incorrect Inputs",
       });
     }
+    const { contentType } = typeAndContentType(type);
 
+    if (contentType == null) {
+      return res.status(400).json({
+        message: "Upload image, video or pdf only",
+      });
+    }
+
+    console.log(title);
+    console.log(contentType)
     const userId = req.userId!;
     const uploadedFile = await prisma.file.create({
       data: {
@@ -209,7 +234,8 @@ export async function fetchFileController(req: Request, res: Response) {
         // fileTitle: file.title
       },
     });
-  } catch {
+  } catch(error) {
+    console.log(error);
     return res.status(500).json({
       message: "Internal server error",
     });

@@ -26,6 +26,7 @@ function Signin() {
         return;
       }
       setIsDisable(true);
+      // await new Promise(()=> {})
       const response = await api.post("/auth/signin", {
         email: email,
         password: password,

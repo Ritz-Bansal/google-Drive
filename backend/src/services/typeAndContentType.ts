@@ -1,18 +1,14 @@
 
 export function typeAndContentType(type: string){
-    let extension: string, contentType: string;
+    let extension: string, contentType: string | null;
+    const fileTypeAndExtension = type.split('/');
+    const length = fileTypeAndExtension.length;
 
-    if (type == "video") {
-        extension = ".mp4";
-        contentType = "video/mp4";
-    } else if (type == "image") {
-        extension = ".jpeg";
-        contentType = "image/png";
-    } else {
-        extension = ".pdf";
-        contentType = "application/pdf";
+    extension = fileTypeAndExtension[length-1] ?? "bin";
+    if(fileTypeAndExtension[0] != "image" && fileTypeAndExtension[0] != "video" && fileTypeAndExtension[0] != "application"){
+        contentType = null;
     }
-
+    contentType = type;
     return {
         extension: extension,
         contentType: contentType

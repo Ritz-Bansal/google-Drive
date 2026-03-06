@@ -17,16 +17,23 @@ function Upload({setIsOpen}: IUpload){
     const [title, setTitle] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [finalUrl, setFinalUrl] = useState<string>("");   
-    const [uploadFile, setUploadFile] = useState<File | null>(null); 
+    const [isDisable, setIsDisable] = useState<boolean>(false);
+    const [uploadedFile, setUploadedFile] = useState<File | null>(null); 
     // const [isOpen, setIsOpen] = useState<boolean>(false);
     const { parentId } = useParams();
 
 
     async function upload(){
         try{
+            if(uploadedFile == null){
+                alert("Upload a file");
+                return;
+            }
             console.log("before presign");
+            setIsDisable(true);
+            // await new Promise(()=> {});
             const response = await api.post("/file/presigned", {
-                type: type
+                type: uploadedFile?.type
             }, {headers: {
                 Authorization: "Bearer " + localStorage.getItem('token')
             }});
@@ -41,7 +48,7 @@ function Upload({setIsOpen}: IUpload){
                 console.log("Beofre put");
                 const upload = await fetch(`${presignedUrl}`, {
                   method: "PUT",
-                  body: uploadFile,
+                  body: uploadedFile,
                   headers: {
                     "If-None-Match": "*",
                     // "Content-Type": uploadFile.type,
@@ -56,8 +63,8 @@ function Upload({setIsOpen}: IUpload){
                     console.log(type);
                     console.log(parentId);
                     const responsex = await api.post("/file/upload", {
-                        title: title, 
-                        type: type,
+                        title: uploadedFile?.name, 
+                        type: uploadedFile?.type,
                         fileUrl: response.data.finalUrl,
                         parentId: parentId
                     }, {headers: {
@@ -74,9 +81,11 @@ function Upload({setIsOpen}: IUpload){
                     }
                 }
             }
+            setIsDisable(false);
             
         }catch(error){
             console.log(error);
+            setIsDisable(false);
         }
     }
     
@@ -92,7 +101,7 @@ function Upload({setIsOpen}: IUpload){
         <div >
             <input id="upload-photo" type="file" onChange={(e) => {
                 console.log(e.target.files?.[0] ?? null);
-                setUploadFile(e.target.files?.[0] ?? null)}}
+                setUploadedFile(e.target.files?.[0] ?? null)}}
                 className="hidden"
                 // className="border-[#3BAD9E] border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 w-full text-left mb-4"
                 accept="image/*, pdf, video/*"
@@ -100,18 +109,18 @@ function Upload({setIsOpen}: IUpload){
             <label htmlFor="upload-photo"
             className="border-[#3BAD9E] text-[1.2rem] block w-full text-[#6c6969] pl-5 border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 text-left mb-4"
             >
-                {uploadFile ? uploadFile.name : "Choose File"}
+                {uploadedFile ? uploadedFile.name : "Choose File"}
                 {/* {console.log(uploadFile)} */}
             </label>
         </div>
         {/* <input type="file" className="border-2" placeholder="upload here" onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}/> */}
-        <input type="text"  placeholder="File title" onChange={(e) => setTitle(e.target.value)}/>
-        <input type="text" placeholder="File type" onChange={(e) => setType(e.target.value)}/>
+        {/* <input type="text"  placeholder="File title" onChange={(e) => setTitle(e.target.value)}/>
+        <input type="text" placeholder="File type" onChange={(e) => setType(e.target.value)}/> */}
         {/* <button className="border-2" onClick={upload}>Upload file</button>
         <button onClick={()=> setIsOpen(false)}>Close</button> */}
-        <div className="flex gap-2 justify-end">
-            <Button name="Upload File" onClick={upload} isDialog={true}/>
-            <Button name="Close" onClick={()=> setIsOpen(false)} isDialog={true} />
+        <div className="flex gap-2 justify-end w-full">
+            <Button name="Upload File" onClick={upload} isDialog={true} isDisable={isDisable}/>
+            <Button name="Close" onClick={()=> setIsOpen(false)} isDialog={true} isDisable={isDisable}/>
         </div>
         </form>
         {/* {console.log(uploadFile)}

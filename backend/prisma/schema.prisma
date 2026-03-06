@@ -42,7 +42,7 @@ model Folder {
 model File {
   id    String @id @default(uuid())
   title   String
-  type    FileType
+  type    String
   url     String
   parent  Folder? @relation(fields: [parentId], references: [id])
   parentId String?        // root will have the folderId to be null
@@ -50,11 +50,11 @@ model File {
   userId  String
 }
 
-enum FileType {
-  video
-  pdf
-  image
-}
+// enum FileType {
+//   video
+//   pdf
+//   image
+// }
 
 // enum Gender {
 //   male

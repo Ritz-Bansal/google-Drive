@@ -7,16 +7,20 @@ function Spinner({ className, ...props }: React.ComponentProps<"svg">) {
     <LoaderIcon
       role="status"
       aria-label="Loading"
-      className={cn("size-5 animate-spin", className)}
+      className={cn("size-2.75 animate-spin", className)}
       {...props}
     />
   );
 }
 
-export function ButtonSpinner() {
+interface IButtonSpinner{
+  isDialog?: boolean;
+}
+
+export function ButtonSpinner({isDialog}: IButtonSpinner) {
   return (
-    <div className="flex justify-center items-center gap-4 p-1">
-      <Spinner />
+    <div className={`flex text-sm justify-center items-center gap-4 ${isDialog? "" : "p-1"}`}>
+      <Spinner className={isDialog ? "size-2.75" : "size-5"}/>
     </div>
   );
 }

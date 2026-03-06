@@ -59,10 +59,10 @@ export function Signup(){
 
           }catch(error: any){
             console.log(error);
-          console.log(error.response.status);
-          if(error.response.status == 400){
+          // console.log(error.response.status);
+          // if(error.response.status == 400){
             // return   -- cannot write return inside a onClick function
-          }
+          // }
           setIsDisable(false);
         }
     }

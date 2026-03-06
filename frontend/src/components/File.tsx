@@ -7,11 +7,11 @@ import video from "../assets/video.png"
 interface IFile{
   id: string;
   title: string;
-  type: string;
+  contentType: string;
   size: number;
 }
 
-function File({id, title, type, size}: IFile){
+function File({id, title, contentType, size}: IFile){
     let gb = false;
     if(size >= 1000){
       size = size/1000;
@@ -33,6 +33,9 @@ function File({id, title, type, size}: IFile){
         console.log(error);
       }
     }
+
+    let contentTypeParts = contentType.split('/');
+    const type = contentTypeParts[0] == "image" ? "image" : contentTypeParts[0] == "video" ? "video" : "pdf"
 
     return (
       <div id={id} onClick={()=> fileClick(id)} className="border-b-2 flex items-center justify-between border-gray-100 pb-4 ">

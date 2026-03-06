@@ -13,13 +13,11 @@ import { DriveProvider } from "./store/DriveContext";
 
 const elem = document.getElementById("root")!;
 const app = (
-  <StrictMode>
     <BrowserRouter>
       <DriveProvider>
         <App />
       </DriveProvider>
     </BrowserRouter>
-  </StrictMode>
 );
 
 if (import.meta.hot) {

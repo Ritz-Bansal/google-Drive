@@ -4,7 +4,7 @@ export const uploadParentFileSchema = zod.object({
   title: zod.string(),
   parentId: zod.uuid(),
   fileUrl: zod.url(),
-  type: zod.enum(["video", "image", "pdf"]),
+  // type: zod.enum(["video", "image", "pdf"]),
 });
 
 export const uploadRootFileSchema = zod.object({
@@ -13,9 +13,9 @@ export const uploadRootFileSchema = zod.object({
   type: zod.enum(["video", "image", "pdf"]),
 });
 
-export const presignedurlSchema = zod.object({
-  type: zod.enum(["video", "image", "pdf"]),
-});
+// export const presignedurlSchema = zod.object({
+//   type: zod.enum(["video", "image", "pdf"]),
+// });
 
 export const fetchFileSchema = zod.object({
   fileId: zod.string(),

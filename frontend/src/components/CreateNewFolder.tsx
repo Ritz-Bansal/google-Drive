@@ -5,6 +5,7 @@ import type { IFolders } from "@/types/interfaces";
 import { DriveContext } from "@/store/DriveContext";
 import InputBox from "./InputBox";
 import Button from "./Button";
+import { createFolderInRootSchema } from "@/validators/folder.validator";
 
 
 interface ICreateNewFolder {
@@ -17,12 +18,22 @@ interface ICreateNewFolder {
 function CreateNewFolder({setIsOpen}: ICreateNewFolder){
     const { folders, setFolders } = useContext(DriveContext)!;
     const [title, setTitle] = useState("");
+    const [isDisable, setIsDisable] = useState<boolean>(false);
     const { parentId } = useParams();
     // const [isOpen, setIsOpen] = useState(false);
 
     async function createNewFolder(){
         console.log("Insde the frontedn function");
         try{
+            const {success, error} = createFolderInRootSchema.safeParse({title: title});
+            console.log(title);
+            console.log(error);
+            console.log(success);
+            if(!success){
+                alert("Title should be min length 3");
+                return;
+            }
+            setIsDisable(true);
             const response = await api.post("/folder/create", {
                 title: title, 
                 parentId: parentId
@@ -36,8 +47,10 @@ function CreateNewFolder({setIsOpen}: ICreateNewFolder){
                 setFolders([...folders, response.data])
                 setIsOpen(false);
             }
+            setIsDisable(false);
         }catch(error){
             console.log(error);
+            setIsDisable(false);
         }
     }
 
@@ -54,8 +67,8 @@ function CreateNewFolder({setIsOpen}: ICreateNewFolder){
         <div className="flex gap-2 justify-end">
             {/* <button className="border-2" onClick={createNewFolder}>Create</button>
             <button className="border-2" onClick={()=> setIsOpen(false)}>Close</button> */}
-            <Button name="Create" onClick={createNewFolder} isDialog={true}/>
-            <Button name="Close" onClick={()=> setIsOpen(false)} isDialog={true}/> 
+            <Button name="Create" onClick={createNewFolder} isDialog={true} isDisable={isDisable}/>
+            <Button name="Close" onClick={()=> setIsOpen(false)} isDialog={true} isDisable={isDisable}/> 
         </div>
         </form>
       </>

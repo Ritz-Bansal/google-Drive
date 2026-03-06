@@ -5,6 +5,7 @@ import { prisma } from "../lib/client.js";
 export async function createRootFolderController(req: Request, res: Response) {
   try {
     console.log("insdide backend route");
+    console.log("Inside the folder controller");
 
     let { parentId, title } = req.body;
     if (parentId == undefined) {

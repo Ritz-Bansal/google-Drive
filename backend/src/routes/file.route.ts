@@ -1,10 +1,10 @@
 import express from "express";
-import { createParentFileController, createRootFileController, fetchFileController, getFolderAndFilesController, getPresignedUrlController, searchFileController } from "../controllers/file.controller.js";
+import {  createRootFileController, fetchFileController, getFolderAndFilesController, getPresignedUrlController, searchFileController } from "../controllers/file.controller.js";
 
 const fileRouter = express.Router();
 
 fileRouter.post("/presigned", getPresignedUrlController);
-fileRouter.post("/upload/:parentId", createParentFileController);
+// fileRouter.post("/upload/:parentId", createParentFileController);
 fileRouter.post("/upload", createRootFileController);
 fileRouter.get("/fetch/:fileId", fetchFileController)
 
