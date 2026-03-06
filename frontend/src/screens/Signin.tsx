@@ -11,6 +11,7 @@ function Signin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState<string>("");
   const [isValid, setIsValid] = useState<boolean>(true);
+  const [isDisable, setIsDisable] = useState<boolean>(false);
   const navigate = useNavigate();
 
   async function signin() {
@@ -24,6 +25,7 @@ function Signin() {
         setIsValid(false);
         return;
       }
+      setIsDisable(true);
       const response = await api.post("/auth/signin", {
         email: email,
         password: password,
@@ -35,11 +37,13 @@ function Signin() {
         localStorage.setItem("token", token);
         navigate("/home");
       }
+      setIsDisable(false);
     } catch (error: any) {
       console.log(error);
       if (error.response.status == 400) {
         console.log("Bad inputs"); // get this in the inteerceptor, 400 and 401(unauthorised)
       }
+      setIsDisable(false);
     }
   }
 
@@ -73,7 +77,7 @@ function Signin() {
           <InputBox focus={true} setterFunction={setEmail} header="E-mail" />
           <InputBox setterFunction={setPassword} header="Password" />
         </div>
-        <Button name="Login" onClick={signin} />
+        <Button name="Login" onClick={signin} isDisable={isDisable}/>
         {isValid ? null : <Error content="Invalid credentials. Please try again." />}
         <Footer navigateTo={goToSignup} content="New User? " link="Sign In" />
       </form>

@@ -4,6 +4,7 @@ import authRouter from "./routes/auth.route.js";
 import folderRouter from "./routes/folder.route.js";
 import authFunction from "./auth/auth.js";
 import fileRouter from "./routes/file.route.js";
+import userRouter from "./routes/user.routes.js";
 
 const app = express();
 
@@ -13,6 +14,8 @@ app.use(cors());
 app.use("/auth", authRouter);
 
 app.use(authFunction);
+
+app.use("/user", userRouter);
 app.use("/folder", folderRouter);
 app.use("/file", fileRouter);
 

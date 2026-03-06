@@ -7,8 +7,14 @@ import slideLeft from "../assets/arrow.png";
 import slideRight from "../assets/rightArrow.png";
 import { Modal } from "./Modal";
 import { ScrollBar } from "./ScrollBar";
+import { FileSkeleton } from "./FileSkeleton";
+import { FolderSkeleton } from "./FolderSkeleton";
 
-function MainContent() {
+interface IMainContent {
+  isLoading: boolean;
+}
+
+function MainContent({isLoading}: IMainContent) {
   //   const folders = [
   //     { id: "f1a2b3c4-d111-4a11-8a11-abcdef000001", title: "Work" },
   //     { id: "f1a2b3c4-d222-4a22-8a22-abcdef000002", title: "Personal" },
@@ -62,23 +68,24 @@ function MainContent() {
           </div>
         </div>
         <div className="flex mt-5">
-          <img
+          {isCreateOpen && (
+            <Modal
+            modalType={"createFolder"}
+            isOpen={isCreateOpen}
+            setIsOpen={setIsCreateOpen}
+            title="New folder"
+            />
+          )}
+          {isLoading ? <FolderSkeleton/> : <><img
             src={createFolder}
             onClick={() => setIsCreateOpen(true)}
             alt=""
             className="w-[150px] h-[110px]"
           />
-          {isCreateOpen && (
-            <Modal
-              modalType={"createFolder"}
-              isOpen={isCreateOpen}
-              setIsOpen={setIsCreateOpen}
-              title="New folder"
-            />
-          )}
           {visibleFolders.map((folder) => (
             <Folders id={folder.id} title={folder.title} />
           ))}
+          </>}
         </div>
       </div>
 
@@ -90,7 +97,7 @@ function MainContent() {
         </div>
         {/* <ScrollBar /> */}
         <div className="h-48 overflow-y-auto no-scrollbar">
-          {files.map((file) => (
+          {isLoading? <FileSkeleton />:files.map((file) => (
             <File id={file.id} title={file.title} type={file.type} size={100} />
           ))}
         </div>

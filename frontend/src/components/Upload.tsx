@@ -98,7 +98,8 @@ function Upload({setIsOpen}: IUpload){
             <label htmlFor="upload-photo"
             className="border-[#3BAD9E] text-[1.2rem] block w-full text-[#6c6969] pl-5 border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 text-left mb-4"
             >
-                Choose File
+                {uploadFile ? uploadFile.name : "Choose File"}
+                {/* {console.log(uploadFile)} */}
             </label>
         </div>
         {/* <input type="file" className="border-2" placeholder="upload here" onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}/> */}

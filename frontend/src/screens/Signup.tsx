@@ -1,4 +1,5 @@
 import Button from "@/components/Button";
+import type { ButtonSpinner } from "@/components/ButtonSpinner";
 import Error from "@/components/Error";
 import Footer from "@/components/Footer";
 import InputBox from "@/components/InputBox";
@@ -19,6 +20,8 @@ export function Signup(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [username, setUsername] = useState("");
+    // const [loading, setIsLoading] = useState<boolean>(false);
+    const [isDisable, setIsDisable] = useState<boolean>(false);
     // const [gender, setGender] = useState<Gender>(Gender.Male);
     const [isValid, setIsValid] = useState<boolean>(true);
 
@@ -29,15 +32,16 @@ export function Signup(){
     
     async function signup(){
         try{
-            console.log("Inside the function");
-            // gender.toLowerCase();
-            const {success} = signupSchema.safeParse({email, username, password});
-
-            if(!success){
-              setIsValid(false);
-              return;
-            }
-
+          console.log("Inside the function");
+          // gender.toLowerCase();
+          const {success} = signupSchema.safeParse({email, username, password});
+          
+          if(!success){
+            setIsValid(false);
+            return;
+          }
+          
+            setIsDisable(true);
             console.log("Before api call");
             const response = await api.post("/auth/signup", {
                 email: email,
@@ -51,12 +55,15 @@ export function Signup(){
               navigate("/signin"); // routing to the landing page
             }
 
+            setIsDisable(false);
+
           }catch(error: any){
             console.log(error);
           console.log(error.response.status);
           if(error.response.status == 400){
             // return   -- cannot write return inside a onClick function
           }
+          setIsDisable(false);
         }
     }
     
@@ -76,7 +83,7 @@ export function Signup(){
             <InputBox  header="E-mail" setterFunction={setEmail}/>
             <InputBox  header="Password" setterFunction={setPassword}/>
 
-            <Button name="Sign Up" onClick={signup}/>            
+            <Button name="Sign Up" onClick={signup} isDisable={isDisable} />            
             {isValid ? null: <Error content="An account with this email already exists." />}
             <Footer content="Already have an account? " link="Login" navigateTo={navigateToSignin} />
 
@@ -94,8 +101,8 @@ export function Signup(){
         
         <div className="bg-[#3BAD9E] text-white text-5xl flex justify-end items-center font-">
           <div className="text-center pr-20 font-bold">
-            <h2 className="text-right">Create your <br />STASH.</h2><br />
-            <h2 className="text-right">Own your <br />SPACE.</h2>
+            <h2 className="text-right">Create your <h2 className="mt-3">STASH.</h2></h2><br />
+            <h2 className="text-right">Own your <h2 className="mt-3">SPACE.</h2></h2>
           </div>
         </div>
       

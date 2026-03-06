@@ -1,8 +1,10 @@
 import axios from "axios";
 import globalRouter from "./globalRouter";
 
+// https://google-drive-zeee.onrender.com
+
 const api = axios.create({
-  baseURL: `https://google-drive-zeee.onrender.com`, // configure the port according to you
+  baseURL: `http://localhost:3000`, // configure the port according to you
   headers: {
     "Content-Type": "Application/json",
   },
@@ -19,6 +21,8 @@ api.interceptors.response.use(
         // this cannot happen now as I added FE zod and FE zod and BE zod are same, can only happen if the hacker intercepts my req
         if(error.status == 400 || error.status == 404){
             alert("Wrong inputs");
+        }else if(error.status == 409){
+            alert("Email taken");
         }else 
             if(error.status == 401){
             console.log("Unauthorized")

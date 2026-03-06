@@ -21,14 +21,16 @@ function Home() {
   // I want a better apprach, what if 100 modals ??????????
   const { folders, setFolders } = useContext(DriveContext)!;
   const { files, setFiles } = useContext(DriveContext)!;
-
-
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const navigate = useNavigate();
   const { parentId } = useParams();
   
   async function fetch() {
     try {
+      setIsLoading(true);
+      console.log("isLoading value", isLoading)
+      // await new Promise(() => {});
       const token = localStorage.getItem("token");
       const response = await api.get("/file/check", {
         params: {
@@ -43,13 +45,17 @@ function Home() {
         setFiles(response.data.file);
         setFolders(response.data.folder);
       }
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
+    console.log(isLoading, "before fetch");
     fetch();
+    console.log(isLoading, "after fetch");
 
     return () => {
       setFolders([]);
@@ -61,7 +67,7 @@ function Home() {
       <div className="m-0 grid-rows-2"><TopBar/></div>
       <div className="grid grid-cols-[250px_1fr]">
         <LeftBar />
-        <MainContent />
+        <MainContent isLoading={isLoading}/>
       </div>
       {/* {JSON.stringify(folders)} */}
     </div>
