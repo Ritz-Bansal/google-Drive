@@ -67,7 +67,7 @@ function Signin() {
           </div>
         </div>
       <div className="flex items-center justify-center">
-      <form
+      <form className="max-w-100"
         onSubmit={(e) => {
           e.preventDefault();
           signin();

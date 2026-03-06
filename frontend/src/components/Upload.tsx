@@ -90,7 +90,9 @@ function Upload({setIsOpen}: IUpload){
         }}>
         {/* <InputBox placeholder="Choose File" setterFunction={setUploadFile} type="file" /> */}
         <div >
-            <input id="upload-photo" type="file" onChange={(e) => setUploadFile(e.target.files?.[0] ?? null)}
+            <input id="upload-photo" type="file" onChange={(e) => {
+                console.log(e.target.files?.[0] ?? null);
+                setUploadFile(e.target.files?.[0] ?? null)}}
                 className="hidden"
                 // className="border-[#3BAD9E] border-1 focus:outline-none focus:ring-[#3BAD9E] rounded-lg p-2.5 w-full text-left mb-4"
                 accept="image/*, pdf, video/*"
@@ -108,7 +110,7 @@ function Upload({setIsOpen}: IUpload){
         {/* <button className="border-2" onClick={upload}>Upload file</button>
         <button onClick={()=> setIsOpen(false)}>Close</button> */}
         <div className="flex gap-2 justify-end">
-            <Button name="Upload File" onClick={upload} isDialog={true} />
+            <Button name="Upload File" onClick={upload} isDialog={true}/>
             <Button name="Close" onClick={()=> setIsOpen(false)} isDialog={true} />
         </div>
         </form>

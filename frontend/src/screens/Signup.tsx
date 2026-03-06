@@ -74,11 +74,11 @@ export function Signup(){
     return (
       <div className="grid grid-cols-2 h-screen">
         <div className=" flex items-center justify-center">
-        <form onSubmit={(e)=> {
+        <form className="max-w-100" onSubmit={(e)=> {
           e.preventDefault();
           signup();
           }}>
-          <div>
+          <div className="w-full">
             <InputBox focus={true}  header="Full Name" setterFunction={setUsername}/>
             <InputBox  header="E-mail" setterFunction={setEmail}/>
             <InputBox  header="Password" setterFunction={setPassword}/>
