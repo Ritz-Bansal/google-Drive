@@ -1,10 +1,10 @@
 import axios from "axios";
 import globalRouter from "./globalRouter";
-// http://localhost:3000
 
+// https://google-drive-zeee.onrender.com
 
 const api = axios.create({
-  baseURL: `https://google-drive-zeee.onrender.com`, // configure the port according to you
+  baseURL: `http://localhost:3000`, // configure the port according to you
   headers: {
     "Content-Type": "Application/json",
   },

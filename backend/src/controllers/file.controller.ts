@@ -153,6 +153,15 @@ export async function getPresignedUrlController(req: Request, res: Response) {
 //   }
 // }
 
+interface IIsValid {
+  parentId: string | null;
+  title: string;
+  id: string;
+  numberId: number;
+  userId: string;
+  path: string;
+}
+
 export async function createRootFileController(req: Request, res: Response) {
   try {
     // I think no need to check file size wala here, as agar S3 mein hi nahi dala toh yaha 
@@ -190,17 +199,57 @@ export async function createRootFileController(req: Request, res: Response) {
 
     console.log(title);
     console.log(contentType)
+    
     const userId = req.userId!;
-    const uploadedFile = await prisma.file.create({
-      data: {
-        title: title,
-        url: fileUrl,
-        parentId: parentId,
-        type: type,
-        userId: userId,
-        size: size
-      },
-    });
+    let isValid: IIsValid | null = null;
+    if(parentId != null){
+      isValid = await prisma.folder.findUnique({
+        where: {
+          id: parentId
+        }
+      })
+  
+      if(!isValid){
+        return res.status(400).json({
+          message: "Incorrect parent Id"
+        });
+      }
+      
+    }
+
+
+    const uploadedFile = await prisma.$transaction(async (tx) => {
+      const uploadedFile = await prisma.file.create({
+        data: {
+          title: title,
+          url: fileUrl,
+          parentId: parentId,
+          type: type,
+          userId: userId,
+          size: size,
+          path: "temp"
+        },
+      });
+
+      let path: string;
+      if (parentId == null) {
+        path = `/${uploadedFile.numberId}`;
+      } else {
+        path = `${isValid?.path}/${uploadedFile.numberId}/`;
+      }
+
+      await prisma.file.update({
+        where: {
+          id: uploadedFile.id
+        },
+        data: {
+          path: path
+        }
+      })
+
+      return uploadedFile;
+    })
+    
 
     console.log("Responding from the upload file");
     return res.status(201).json({

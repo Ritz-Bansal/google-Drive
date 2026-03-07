@@ -40,7 +40,7 @@ model Folder {
   parent            Folder?  @relation(name: "self_relationship", fields: [parentId], references: [id])
   childrenFolders   Folder[] @relation("self_relationship") // Give me all folders whose parentId equals parentId.
   file              File[]
-  path              String
+  path              String  // store something like /1/2/
 }
 
 model File {
@@ -60,8 +60,10 @@ model File {
 model SharableLink {
   id          String @id @default(uuid())
   type        LinkType
-  sharedId    String
-  hash        String
+  resourceId  String     // currently ek resource can have only one hash, when I will add link options, 
+  //then many links, tab I will remove the unique contraint, better to validate in BE then, schema
+  //changes are difficult
+  hash        String    @unique 
   created_at  DateTime  @default(now())  // rahul bhaiya ne bola bana dene ka, 
   //also future mein if I add expiration, this will be very helpful
 }
