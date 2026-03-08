@@ -37,7 +37,7 @@ function navigateTo(folderId: string) {
             id={id}
           />
         )}
-          <div className="w-[150px] h-[110px] ml-11">
+          <div className="w-[110px] sm:w-[130px] md:w-[150px] h-[90px] sm:h-[100px] md:h-[110px] ml-4 sm:ml-7 md:ml-11 flex-shrink-0">
             <img
               id={id}
               onClick={() => navigateTo(id)}

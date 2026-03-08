@@ -59,15 +59,11 @@ function SharedLink() {
   }, [resourceId]);
 
   return (
-    <div className="grid grid-rows-[auto_1fr] h-screen">
-      <div className="m-0 grid-rows-2">
+    <div className="flex flex-col h-screen overflow-hidden">
+      <div className="flex-shrink-0">
         <TopBar isShared={true} shareHash={hash} setSharedFolders={setFolders} setSharedFiles={setFiles}/>
       </div>
-      <div className="">
-        {/* <LeftBar /> */}
-        {/* <div className="mx-20 mt-4">
-          <SearchBar />
-        </div> */}
+      <div className="flex-1 overflow-y-auto">
         <MainContent
           isShared={true}
           isLoading={isLoading}
@@ -76,7 +72,6 @@ function SharedLink() {
           shareHash={hash}
         />
       </div>
-      {/* {JSON.stringify(folders)} */}
     </div>
   );
 }

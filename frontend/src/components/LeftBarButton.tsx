@@ -1,17 +1,24 @@
-
 interface ILeftBarButton {
-    content: string;
-    onCLickHandler: ()=> void;
+  content: string;
+  onCLickHandler: () => void;
+  variant?: "default" | "outline";
 }
 
-function LeftBarButton({content, onCLickHandler}: ILeftBarButton){
-    return (
-        <div>
-            <button
-            className="rounded-4xl bg-white font-medium text-sm text-[#3BAD9E] py-2 w-full min-w-41 max-w-41" 
-            onClick={onCLickHandler}>{content}</button>
-        </div>
-    )
+function LeftBarButton({ content, onCLickHandler, variant = "default" }: ILeftBarButton) {
+  const base =
+    "rounded-4xl font-medium text-sm py-3 px-4 w-[75%] transition-all duration-200 cursor-pointer";
+  const styles =
+    variant === "outline"
+      ? `${base} bg-transparent border-2 border-white text-white hover:bg-white hover:text-[#3BAD9E]`
+      : `${base} bg-white text-[#3BAD9E] hover:bg-[#eaf6f4] shadow-sm`;
+
+  return (
+    <div className="w-full flex justify-center">
+      <button className={styles} onClick={onCLickHandler}>
+        {content}
+      </button>
+    </div>
+  );
 }
 
 export default LeftBarButton;

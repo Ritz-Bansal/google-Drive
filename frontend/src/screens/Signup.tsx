@@ -72,9 +72,9 @@ export function Signup(){
     }
 
     return (
-      <div className="grid grid-cols-2 h-screen">
-        <div className=" flex items-center justify-center">
-        <form className="max-w-100" onSubmit={(e)=> {
+      <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
+        <div className="flex items-center justify-center px-4 py-8">
+        <form className="w-full max-w-sm md:max-w-md" onSubmit={(e)=> {
           e.preventDefault();
           signup();
           }}>
@@ -98,14 +98,15 @@ export function Signup(){
           {/* <p>Already Signed Up? <a onClick={navigateToSignin}>Login</a></p> */}
         </form>
         </div>
-        
-        <div className="bg-[#3BAD9E] text-white text-5xl flex justify-end items-center font-">
-          <div className="text-center pr-20 font-bold">
-            <h2 className="text-right">Create your <h2 className="mt-3">STASH.</h2></h2><br />
-            <h2 className="text-right">Own your <h2 className="mt-3">SPACE.</h2></h2>
+        <div className="bg-[#3BAD9E] text-white flex items-center justify-center md:justify-end py-12 min-h-[120px]">
+          <div className="text-center md:text-right px-6 md:pr-20 font-bold">
+            <h2 className="text-3xl md:text-5xl">Create your</h2>
+            <h2 className="mt-2 text-3xl md:text-5xl">STASH.</h2>
+            <br />
+            <h2 className="text-3xl md:text-5xl">Own your</h2>
+            <h2 className="mt-2 text-3xl md:text-5xl">SPACE.</h2>
           </div>
         </div>
-      
       </div>
     );
 }

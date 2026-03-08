@@ -60,15 +60,15 @@ function Signin() {
   }
 
   return (
-    <div className="grid grid-cols-2 h-screen">
-        <div className="bg-[#3BAD9E] text-white text-5xl flex items-center">
-          <div className="pl-20 font-bold text-[4rem]">
-            <h2>Welcome</h2>
-            <h2 className="mt-2">Back!</h2>
-          </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 min-h-screen">
+      <div className="bg-[#3BAD9E] text-white flex items-center justify-center md:justify-start py-12 min-h-[120px]">
+        <div className="px-6 md:pl-20 font-bold">
+          <h2 className="text-3xl md:text-5xl">Welcome</h2>
+          <h2 className="mt-2 text-3xl md:text-5xl">Back!</h2>
         </div>
-      <div className="flex items-center justify-center">
-      <form className="max-w-100"
+      </div>
+      <div className="flex items-center justify-center px-4 py-8">
+      <form className="w-full max-w-sm md:max-w-md"
         onSubmit={(e) => {
           e.preventDefault();
           signin();
