@@ -3,8 +3,18 @@ import logo from "../assets/logo.png"
 import { AvatarSkeleton } from "./AvatarSkeleton.";
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
+import Button from "./Button";
+import { useNavigate } from "react-router-dom";
+import type { IFiles, IFolders } from "@/types/interfaces";
 
-function TopBar(){
+interface ITopBar {
+  isShared?: boolean;
+  shareHash?: string;
+  setSharedFolders?: React.Dispatch<React.SetStateAction<IFolders[]>>;
+  setSharedFiles?: React.Dispatch<React.SetStateAction<IFiles[]>>;
+}
+
+function TopBar({isShared, shareHash, setSharedFiles, setSharedFolders}: ITopBar){
   // Hardcoded for now, need to create a route to fetch the user details, I only have userID
     // const user = "Rithvik";
     // const profileIsLoading = true;
@@ -13,32 +23,40 @@ function TopBar(){
     const [profileIsLoading, setProfileIsLoading] = useState<boolean>(true);
     const [username, setUsername] = useState<string>("");
     const [initial, setInitial] = useState<string>("");
+    const navigate = useNavigate();
 
-    async function fetchProfile(){
-      try{
-        // await new Promise(()=> {});
-        const response = await api.get("/user/profile", {
-          headers: {
-            Authorization: 'Bearer '+ localStorage.getItem('token')
+    if(!isShared){
+      async function fetchProfile(){
+        try{
+          // await new Promise(()=> {});
+          const response = await api.get("/user/profile", {
+            headers: {
+              Authorization: 'Bearer '+ localStorage.getItem('token')
+            }
+          });
+          if(response.status == 200){
+            const data: string = response.data.username;
+            const name =  data.toUpperCase();
+            setUsername(name);
+            setInitial(name[0]!);
           }
-        });
-        if(response.status == 200){
-          const data: string = response.data.username;
-          const name =  data.toUpperCase();
-          setUsername(name);
-          setInitial(name[0]!);
+  
+          setProfileIsLoading(false);
+        }catch(error){
+          console.log(error);
+          setProfileIsLoading(false);
         }
-
-        setProfileIsLoading(false);
-      }catch(error){
-        console.log(error);
-        setProfileIsLoading(false);
       }
+  
+      useEffect(()=> {
+        fetchProfile();
+      }, []);
+
     }
 
-    useEffect(()=> {
-      fetchProfile();
-    }, []);
+    function navigateFunction(route: string){
+      navigate(`${route}`);
+    }
 //
     return (
       <div className="flex items-center pt-12 pb-8">
@@ -47,14 +65,54 @@ function TopBar(){
           <img src={logo} alt="" width={150} />
         </div>
         {/* basis-2/5" */}
+        {/* <div className="basis-5/6 pl-35">
+          {!isShared && <SearchBar />}
+        </div> */}
         <div className="basis-5/6 pl-35">
-          <SearchBar />
+          <SearchBar
+            isShared={isShared}
+            shareHash={shareHash}
+            setSharedFolders={setSharedFolders}
+            setSharedFiles={setSharedFiles}
+          />
         </div>
         <div className="flex py-3 basis-2/6 justify-end items-center pr-20 max-h-3">
-          {profileIsLoading? <AvatarSkeleton/> : <><h1 className="text-xl text-[#8C8989] font-bold">{username}</h1>
-          <button className="rounded-full ml-2.5 text-lg text-white font-semibold bg-[#3BAD9E] h-7.5 w-7.5">
-            {initial}
-          </button></>}
+          {isShared ? (
+            <div className="flex gap-4">
+              <button
+                className="bg-[#3BAD9E] rounded-lg p-2 text-white min-w-20"
+                onClick={() => {
+                  navigateFunction("/signup");
+                }}
+              >
+                Sign Up
+              </button>
+
+              <button
+                className="bg-[#3BAD9E] rounded-lg p-2 text-white min-w-20"
+                onClick={() => {
+                  navigateFunction("/signin");
+                }}
+              >
+                Sign In
+              </button>
+            </div>
+          ) : (
+            <>
+              {profileIsLoading ? (
+                <AvatarSkeleton />
+              ) : (
+                <>
+                  <h1 className="text-xl text-[#8C8989] font-bold">
+                    {username}
+                  </h1>
+                  <button className="rounded-full ml-2.5 text-lg text-white font-semibold bg-[#3BAD9E] h-7.5 w-7.5">
+                    {initial}
+                  </button>
+                </>
+              )}
+            </>
+          )}
         </div>
       </div>
     );

@@ -13,9 +13,3 @@ export const fetchResourceSchema = zod.object({
   hash: zod.string(),
   resourceId: zod.string(),
 });
-
-export const sharedSearchSchema = zod.object({
-  hash: zod.string(),
-  resourceId: zod.string(),
-  title: zod.string(),
-});

@@ -14,6 +14,7 @@ interface IUpload{
 // {setFiles, files}: IUpload
 function Upload({setIsOpen}: IUpload){
     const {files, setFiles} = useContext(DriveContext)!;
+    const {totalSize, setTotalSize} = useContext(DriveContext)!;
     const [title, setTitle] = useState<string>("");
     const [type, setType] = useState<string>("");
     const [finalUrl, setFinalUrl] = useState<string>("");   
@@ -78,8 +79,8 @@ function Upload({setIsOpen}: IUpload){
                     if(responsex.status == 201){
                         alert("File uploaded");
                         setFiles([...files, responsex.data]);
+                        setTotalSize(totalSize + (uploadedFile?.size ?? 0));
                         setIsOpen(false);
-                        
                     }
                 }
             }

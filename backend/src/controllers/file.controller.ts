@@ -377,6 +377,14 @@ export async function getFolderAndFilesController(
 
     // let data = [];
     // if (typeof parentId == "string") {
+    const usage = await prisma.file.aggregate({
+      _sum: { size: true },
+      where: {
+        userId: userId,
+      },
+    });
+    const totalSize = usage._sum.size ?? 0;
+
     const folderData = await prisma.folder.findMany({
       where: {
         parentId: parentId,
@@ -434,7 +442,8 @@ export async function getFolderAndFilesController(
         title: data.title,
         type: data.type,
         size: data.size
-      }))
+      })),
+      totalSize
     });
     // this code can be removed
     // } else {

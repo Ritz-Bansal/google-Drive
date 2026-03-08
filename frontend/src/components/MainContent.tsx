@@ -2,19 +2,30 @@ import { DriveContext } from "@/store/DriveContext";
 import { useContext, useState } from "react";
 import Folders from "./Folders";
 import File from "./File";
-import createFolder from "../assets/newFolder.png"
+import createFolder from "../assets/newFolder.png";
 import slideLeft from "../assets/arrow.png";
 import slideRight from "../assets/rightArrow.png";
 import { Modal } from "./Modal";
 import { ScrollBar } from "./ScrollBar";
 import { FileSkeleton } from "./FileSkeleton";
 import { FolderSkeleton } from "./FolderSkeleton";
+import type { IFiles, IFolders } from "@/types/interfaces";
 
 interface IMainContent {
   isLoading: boolean;
+  sharedFiles?: IFiles[];
+  sharedFolders?: IFolders[];
+  isShared?: boolean;
+  shareHash?: string;
 }
 
-function MainContent({isLoading}: IMainContent) {
+function MainContent({
+  isLoading,
+  sharedFiles,
+  sharedFolders,
+  isShared,
+  shareHash,
+}: IMainContent) {
   //   const folders = [
   //     { id: "f1a2b3c4-d111-4a11-8a11-abcdef000001", title: "Work" },
   //     { id: "f1a2b3c4-d222-4a22-8a22-abcdef000002", title: "Personal" },
@@ -30,21 +41,19 @@ function MainContent({isLoading}: IMainContent) {
   const { folders } = useContext(DriveContext)!;
   const { files } = useContext(DriveContext)!;
   const [startIdx, setStartIdx] = useState(0);
-  const visibleFolders = folders.slice(startIdx, startIdx+5);
+  const visibleFolders = folders.slice(startIdx, startIdx + 5);
   const [isCreateOpen, setIsCreateOpen] = useState<boolean>(false);
 
-
   const len = folders.length;
-  function handleIncIndex(){
-
-    if(startIdx+1+5 <= len+1){
-      setStartIdx((x)=> x+1);
+  function handleIncIndex() {
+    if (startIdx + 1 + 5 <= len + 1) {
+      setStartIdx((x) => x + 1);
     }
   }
 
-  function handleDecIndex(){
-    if(startIdx-1 >=0 ){
-      setStartIdx((x) => x-1);
+  function handleDecIndex() {
+    if (startIdx - 1 >= 0) {
+      setStartIdx((x) => x - 1);
     }
   }
   return (
@@ -70,22 +79,36 @@ function MainContent({isLoading}: IMainContent) {
         <div className="flex mt-5">
           {isCreateOpen && (
             <Modal
-            modalType={"createFolder"}
-            isOpen={isCreateOpen}
-            setIsOpen={setIsCreateOpen}
-            title="New folder"
+              modalType={"createFolder"}
+              isOpen={isCreateOpen}
+              setIsOpen={setIsCreateOpen}
+              title="New folder"
             />
           )}
-          {isLoading ? <FolderSkeleton/> : <><img
-            src={createFolder}
-            onClick={() => setIsCreateOpen(true)}
-            alt=""
-            className="w-[150px] h-[110px]"
-          />
-          {visibleFolders.map((folder) => (
-            <Folders id={folder.id} title={folder.title} />
-          ))}
-          </>}
+          {isLoading ? (
+            <FolderSkeleton />
+          ) : (
+            <>
+              <img
+                src={createFolder}
+                onClick={() => setIsCreateOpen(true)}
+                alt=""
+                className="w-[150px] h-[110px]"
+              />
+              {isShared
+                ? sharedFolders!.map((folder) => (
+                    <Folders
+                      isShared={true}
+                      shareHash={shareHash}
+                      id={folder.id}
+                      title={folder.title}
+                    />
+                  ))
+                : visibleFolders.map((folder) => (
+                    <Folders id={folder.id} title={folder.title} />
+                  ))}
+            </>
+          )}
         </div>
       </div>
 
@@ -93,13 +116,35 @@ function MainContent({isLoading}: IMainContent) {
         <h2 className="text-lg text-[#8C8989] font-bold">ALL FILES</h2>
         <div className="flex justify-between text-[#3BAD9E] font-medium mt-3">
           <div>NAME</div>
-          <div className="mr-12">FILE SIZE</div>
+          <div className="mr-16">FILE SIZE</div>
         </div>
         {/* <ScrollBar /> */}
         <div className="h-48 overflow-y-auto no-scrollbar">
-          {isLoading? <FileSkeleton />:files.map((file) => (
-            <File key={file.id} id={file.id} title={file.title} contentType={file.type} size={file.size} />
-          ))}
+          {isLoading ? (
+            <FileSkeleton />
+          ) : isShared ? (
+            sharedFiles!.map((file) => (
+              <File
+                key={file.id}
+                id={file.id}
+                title={file.title}
+                contentType={file.type}
+                size={file.size}
+                isShared={isShared}
+                shareHash={shareHash}
+              />
+            ))
+          ) : (
+            files.map((file) => (
+              <File
+                key={file.id}
+                id={file.id}
+                title={file.title}
+                contentType={file.type}
+                size={file.size}
+              />
+            ))
+          )}
         </div>
       </div>
     </div>

@@ -17,6 +17,7 @@ import FolderForm from "./FolderForm";
 import UploadForm from "./UploadForm";
 import CreateNewFolder from "./CreateNewFolder";
 import Upload from "./Upload";
+import ShareLink from "./ShareLink";
 
 
 // interface IDialog {
@@ -34,13 +35,15 @@ import Upload from "./Upload";
 // }
 
 interface IModal {
-  modalType: "createFolder" | "uploadFile" | null;
+  modalType: "createFolder" | "uploadFile" | "shareLink" | null;
   isOpen: boolean;
   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
   title: string;
+  id?: string;
+  type?: "folder" | "file"
 }
 // {title, onSubmit, isOpen, setIsOpen, modalType}
-export function Modal({ modalType, isOpen, setIsOpen, title }: IModal) {
+export function Modal({ modalType, isOpen, setIsOpen, title, id, type }: IModal) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen} >
       <form>
@@ -50,6 +53,7 @@ export function Modal({ modalType, isOpen, setIsOpen, title }: IModal) {
           </DialogHeader>
             {modalType === "createFolder" && <CreateNewFolder setIsOpen={setIsOpen} />}
             {modalType === "uploadFile" && <Upload setIsOpen={setIsOpen}/>}
+            {modalType === "shareLink" && <ShareLink type={type!} id={id!}/>}
         </DialogContent>
       </form>
     </Dialog>

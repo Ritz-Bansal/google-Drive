@@ -8,18 +8,19 @@ function LeftBar(){
     const [isUploadOpen, setIsUploadOpen] = useState<boolean>(false);
     // const [sizeInGB, setSizeInGB] = useState<number>(0);
     // const [percentage, setPercentage] = useState<number>(0);
-    const {files} = useContext(DriveContext)!;
+    // const {files} = useContext(DriveContext)!;
 
     
-    // useEffect(function totalFileSize(){
-    // no need of useEffect idhar, only for sideEffects, as soon as the files canges, the entire component will re-render
-      console.log("Inside the useEffect");
-      let totalSize: number = 0;
-      files.forEach((file) => {
-        totalSize += file.size;
-      });
-      console.log("Total size in bytes ", totalSize);
+    // // useEffect(function totalFileSize(){
+    // // no need of useEffect idhar, only for sideEffects, as soon as the files canges, the entire component will re-render
+    //   console.log("Inside the useEffect");
+    //   let totalSize: number = 0;
+    //   files.forEach((file) => {
+    //     totalSize += file.size;
+    //   });
+    //   console.log("Total size in bytes ", totalSize);
 
+      const { totalSize } = useContext(DriveContext)!;
       const GB = 1024*1024*1024;
       const total_size_in_gb = Number((totalSize/(GB)).toFixed(2));
       // aisa calculate karna se thoda sa error can come as meine pehele hi number ko reduce kardiya hai, par itna chalta hai

@@ -21,10 +21,12 @@ function Home() {
   // I want a better apprach, what if 100 modals ??????????
   const { folders, setFolders } = useContext(DriveContext)!;
   const { files, setFiles } = useContext(DriveContext)!;
+  const { totalSize, setTotalSize } = useContext(DriveContext)!;
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const navigate = useNavigate();
   const { parentId } = useParams();
+  console.log("ParentId ",parentId);
   
   async function fetch() {
     try {
@@ -45,6 +47,7 @@ function Home() {
         console.log(response.data.file);
         setFiles(response.data.file);
         setFolders(response.data.folder);
+        setTotalSize(response.data.totalSize);
       }
       setIsLoading(false);
     } catch (error) {

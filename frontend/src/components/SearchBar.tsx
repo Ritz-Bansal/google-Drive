@@ -10,27 +10,58 @@ import { useParams } from "react-router-dom";
 //   setFiles: React.Dispatch<SetStateAction<IFiles[]>>;
 // }
 // {setFiles, setFolders}: ISearchBar
-function SearchBar(){
+
+interface ISearchBarProps {
+  isShared?: boolean;
+  shareHash?: string;
+  setSharedFolders?: React.Dispatch<SetStateAction<IFolders[]>>;
+  setSharedFiles?: React.Dispatch<SetStateAction<IFiles[]>>;
+}
+
+
+function SearchBar({isShared, shareHash, setSharedFolders, setSharedFiles}: ISearchBarProps){
     const [title, setTitle] = useState("");
     const {setFolders, setFiles} = useContext(DriveContext)!;
     
-    const { parentId } = useParams();
+    // const { parentId } = useParams();
+    const { parentId, resourceId } = useParams();
+    // shared route: /home/:hash/:resourceId
+    // home route:   /home/:parentId?
+    const currentFolderId = isShared ? resourceId : parentId;
+
     async function searchData(){
         try{
-            console.log(title);
-            console.log(parentId);
-            const token = localStorage.getItem('token');
-            const response = await api.get("/file/search", { // get mein body nai bhejna
-                params: {
-                    parentId: parentId,
-                    title: title
-                }, headers: {
-                    Authorization:  `Bearer ${token}` 
+            if (isShared && shareHash && setSharedFolders && setSharedFiles) {
+                if(title.length == 0){
+                    return;
                 }
-            });
             
-            setFolders(response.data.folder);
-            setFiles(response.data.file);
+            const response = await api.get("/share/search", {
+                params: {
+                hash: shareHash,
+                resourceId: currentFolderId,  
+                title,
+                },
+            });
+
+            setSharedFolders(response.data.folder);
+            setSharedFiles(response.data.file);
+            }else{
+                console.log(title);
+                console.log(parentId);
+                const token = localStorage.getItem('token');
+                const response = await api.get("/file/search", { // get mein body nai bhejna
+                    params: {
+                        parentId: currentFolderId,
+                        title: title
+                    }, headers: {
+                        Authorization:  `Bearer ${token}` 
+                    }
+                });
+                
+                setFolders(response.data.folder);
+                setFiles(response.data.file);
+            }
             
         }catch(error: any){
             console.log(error);
