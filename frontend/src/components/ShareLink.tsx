@@ -39,7 +39,7 @@ function ShareLink({type, id}: IShareLink){
         );
 
         const hash = response.data.link;
-        const link = `http://localhost:3001/home/${hash}/${id}`;
+        const link = `https://google-drive-mu-lemon.vercel.app//home/${hash}/${id}`;
         setLink(link);
         setIsDisable(false);
       } catch (error) { 
@@ -72,7 +72,7 @@ function ShareLink({type, id}: IShareLink){
           }
         });
         const hash = response.data.link;
-        const link = `http://localhost:3001/home/${hash}/${id}`;
+        const link = `https://google-drive-mu-lemon.vercel.app//home/${hash}/${id}`;
         console.log(link);
         setLink(link);
         setIsDisable(false);
