@@ -2,7 +2,7 @@ import api from "@/lib/api";
 import { DriveContext } from "@/store/DriveContext";
 import type { IFiles, IFolders } from "@/types/interfaces";
 import { Search } from "lucide-react";
-import { useContext, useEffect, useState, type SetStateAction } from "react";
+import { useContext, useEffect, useRef, useState, type SetStateAction } from "react";
 import { useParams } from "react-router-dom";
 
 // interface ISearchBar {
@@ -21,6 +21,7 @@ interface ISearchBarProps {
 
 function SearchBar({isShared, shareHash, setSharedFolders, setSharedFiles}: ISearchBarProps){
     const [title, setTitle] = useState("");
+    const isFirstRender = useRef(true);
     const {setFolders, setFiles} = useContext(DriveContext)!;
     
     // const { parentId } = useParams();
@@ -33,6 +34,15 @@ function SearchBar({isShared, shareHash, setSharedFolders, setSharedFiles}: ISea
         try{
             if (isShared && shareHash && setSharedFolders && setSharedFiles) {
                 if(title.length == 0){
+                    // Re-fetch original shared data when search is cleared
+                    const response = await api.get("/share/resource", {
+                        params: {
+                            hash: shareHash,
+                            resourceId: currentFolderId,
+                        },
+                    });
+                    setSharedFolders(response.data.folder);
+                    setSharedFiles(response.data.file);
                     return;
                 }
             
@@ -47,6 +57,17 @@ function SearchBar({isShared, shareHash, setSharedFolders, setSharedFiles}: ISea
             setSharedFolders(response.data.folder);
             setSharedFiles(response.data.file);
             }else{
+                if(title.length == 0){
+                    // Re-fetch original data when search is cleared
+                    const token = localStorage.getItem('token');
+                    const response = await api.get("/file/check", {
+                        params: { parentId: currentFolderId },
+                        headers: { Authorization: `Bearer ${token}` },
+                    });
+                    setFolders(response.data.folder);
+                    setFiles(response.data.file);
+                    return;
+                }
                 console.log(title);
                 console.log(parentId);
                 const token = localStorage.getItem('token');
@@ -70,6 +91,12 @@ function SearchBar({isShared, shareHash, setSharedFolders, setSharedFiles}: ISea
     
     // need to do debouncing here
     useEffect(() => {
+        // Skip the API call on initial mount — parent already fetches the data
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
         // setInterval or setTimeout, what should I use ? -> setTimeout obvio
         const timer = setTimeout(() => {
             searchData();
