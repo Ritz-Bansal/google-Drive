@@ -49,10 +49,11 @@ function MainContent({
 
   const visibleCount = useVisibleCount();
 
-  // Slots available for real folders (1 slot is always the +create button)
+  // Pick active folder source — sharedFolders on shared page, own folders otherwise
+  const activeFolders = isShared ? (sharedFolders ?? []) : folders;
   const folderSlots = visibleCount;
-  const len = folders.length;
-  const visibleFolders = folders.slice(startIdx, startIdx + folderSlots);
+  const len = activeFolders.length;
+  const visibleFolders = activeFolders.slice(startIdx, startIdx + folderSlots);
 
   // Reset to 0 whenever folders array changes (covers search + navigation)
   // const prevFolderLen = useRef(len);
@@ -68,9 +69,10 @@ function MainContent({
     setStartIdx(0);
   }, [visibleCount]);
 
-  // Can go right: there's at least 1 more folder beyond what's visible
-  // "one extra" means we allow sliding until startIdx === len (all folders scrolled past)
-  const canGoRight = startIdx + folderSlots< len+1 ;
+  // Can go right: +1 extra slot only on normal page (to account for the create button)
+  const canGoRight = isShared
+    ? startIdx + folderSlots < len
+    : startIdx + folderSlots < len + 1;
   // Can go left: we're not at the start
   const canGoLeft = startIdx > 0;
 
@@ -103,7 +105,7 @@ function MainContent({
           </div>
         </div>
 
-        <div className="flex mt-5">
+        <div className={`flex mt-5${isShared ? " -ml-4 sm:-ml-7 md:-ml-11" : ""}`}>
           {isCreateOpen && (
             <Modal
               modalType={"createFolder"}
@@ -116,25 +118,27 @@ function MainContent({
             <FolderSkeleton />
           ) : (
             <>
-              <img
-                src={createFolder}
-                onClick={() => setIsCreateOpen(true)}
-                alt=""
-                className="w-[110px] sm:w-[130px] md:w-[150px] h-[90px] sm:h-[100px] md:h-[110px] flex-shrink-0 cursor-pointer"
-              />
-              {isShared
-                ? sharedFolders!.map((folder) => (
-                    <Folders
-                      key={folder.id}
-                      isShared={true}
-                      shareHash={shareHash}
-                      id={folder.id}
-                      title={folder.title}
-                    />
-                  ))
-                : visibleFolders.map((folder) => (
-                    <Folders key={folder.id} id={folder.id} title={folder.title} />
-                  ))}
+              {!isShared && (
+                <img
+                  src={createFolder}
+                  onClick={() => setIsCreateOpen(true)}
+                  alt=""
+                  className="w-[110px] sm:w-[130px] md:w-[150px] h-[90px] sm:h-[100px] md:h-[110px] flex-shrink-0 cursor-pointer"
+                />
+              )}
+              {visibleFolders.map((folder) =>
+                isShared ? (
+                  <Folders
+                    key={folder.id}
+                    isShared={true}
+                    shareHash={shareHash}
+                    id={folder.id}
+                    title={folder.title}
+                  />
+                ) : (
+                  <Folders key={folder.id} id={folder.id} title={folder.title} />
+                )
+              )}
             </>
           )}
         </div>
