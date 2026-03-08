@@ -83,7 +83,7 @@ function MainContent({
   }
 
   return (
-    <div className="mx-4 sm:mx-8 md:mx-20 mt-6 md:mt-10 flex flex-col h-full">
+    <div className="mx-4 sm:mx-8 md:mx-20 pt-6 md:pt-10 flex flex-col flex-1 min-h-0">
       <h2 className="text-2xl md:text-3xl font-semibold text-[#3BAD9E]">My Drive</h2>
 
       <div className="mt-10">
